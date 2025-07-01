@@ -3,6 +3,8 @@ import Home from './Pages/Home';
 import AboutPage from './Pages/AboutPage';
 import EntrepreneurPage from './Pages/Entrepreneur';
 import './index.css'
+import Marketplace from './Pages/Marketplace';
+import Dashboard from './Pages/Dashboard';
 
 
 function App() {
