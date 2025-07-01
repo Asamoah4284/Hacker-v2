@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 // Dummy team data
 const team = [
   {
-    name: 'Ama Boateng',
+    name: 'Dieu-Donne Eddy',
     role: 'Founder & CEO',
     img: '',
     bio: 'Visionary leader passionate about empowering African entrepreneurs.',
@@ -34,7 +34,7 @@ export default function AboutPage() {
           <span className='font-bold text-xl text-white'>Kola</span>
         </div>
         <div className='hidden md:flex gap-8'>
-          {['Home', 'Marketplace', 'Entrepreneurs', 'About'].map((link) => (
+          {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
             <Link
               key={link}
               to={link === 'Home' ? '/' : '/' + link.toLowerCase()}
