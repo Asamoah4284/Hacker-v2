@@ -139,7 +139,7 @@ export default function Marketplace() {
           <span className='font-bold text-xl text-white'>Kola</span>
         </div>
         <div className='hidden md:flex gap-8'>
-          {['Home', 'Marketplace', 'Entrepreneurs', 'About'].map((link) => (
+          {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
             <Link
               key={link}
               to={link === 'Home' ? '/' : '/' + link.toLowerCase()}
