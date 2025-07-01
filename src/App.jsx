@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import AboutPage from './Pages/AboutPage';
+import Marketplace from './Pages/Marketplace';
+import Dashboard from './Pages/Dashboard';
 import './index.css'
 
 
@@ -18,9 +20,9 @@ function App() {
         {/* <Route path='/entrepreneur' element={<Entrepreneur />} /> */}
 
         {/* Marketplace Route */}
-        {/* <Route path='/marketplace' element={<Marketplace />} /> */}
+        <Route path='/marketplace' element={<Marketplace />} />
 
-        {/* <Route path='/dashboard' element={<Dashboard />} /> */}
+        <Route path='/dashboard' element={<Dashboard />} />
       </Routes>
     </Router>
   );
