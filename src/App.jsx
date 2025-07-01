@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Entrepreneur from './pages/Entrepreneur';
-import Marketplace from './pages/Marketplace';
+import Home from './Pages/Home';
+import AboutPage from './Pages/AboutPage';
+import './index.css'
+
 
 function App() {
   return (
@@ -10,13 +11,16 @@ function App() {
         {/* Home Route */}
         <Route path='/' element={<Home />} />
 
+        <Route path='/about' element={<AboutPage />} />
+        
+
         {/* Entrepreneur Route */}
-        <Route path='/entrepreneur' element={<Entrepreneur />} />
+        {/* <Route path='/entrepreneur' element={<Entrepreneur />} /> */}
 
         {/* Marketplace Route */}
-        <Route path='/marketplace' element={<Marketplace />} />
+        {/* <Route path='/marketplace' element={<Marketplace />} /> */}
 
-        <Route path='/dashboard' element={<Dashboard />} />
+        {/* <Route path='/dashboard' element={<Dashboard />} /> */}
       </Routes>
     </Router>
   );
