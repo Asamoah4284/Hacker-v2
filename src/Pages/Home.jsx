@@ -270,7 +270,7 @@ export default function HomePage() {
         </div>
         {/* Navigation Links */}
         <div className='hidden md:flex gap-8'>
-          {['Home', 'Marketplace', 'Entrepreneurs', 'About'].map((link) => (
+          {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
             <a
               key={link}
               href={link.toLowerCase()}

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import AboutPage from './Pages/AboutPage';
+import EntrepreneurPage from './Pages/Entrepreneur';
 import './index.css'
 
 
@@ -13,9 +14,8 @@ function App() {
 
         <Route path='/about' element={<AboutPage />} />
         
-
         {/* Entrepreneur Route */}
-        {/* <Route path='/entrepreneur' element={<Entrepreneur />} /> */}
+        <Route path='/entrepreneur' element={<EntrepreneurPage />} />
 
         {/* Marketplace Route */}
         {/* <Route path='/marketplace' element={<Marketplace />} /> */}
