@@ -22,6 +22,8 @@ import Footer from '../components/Footer';
 import hero1 from '../assets/images/hero/hero-1.webp';
 import hero2 from '../assets/images/hero/hero-2.webp';
 import hero3 from '../assets/images/hero/hero-3.webp';
+import hero4 from '../assets/images/hero/hero-4.webp';
+import hero5 from '../assets/images/hero/hero-5.webp';
 
 // Local UI components
 function Button({ children, className = '', variant, size, ...props }) {
@@ -100,6 +102,20 @@ const heroImages = [
     alt: 'African fashion designer showcasing traditional patterns',
     name: 'Zara Fashion House',
     location: 'Cape Town, South Africa',
+  },
+  {
+    id: 4,
+    src: hero4,
+    alt: 'Nigerian artisan crafting traditional beaded jewelry',
+    name: 'Adunni Beads',
+    location: 'Lagos, Nigeria',
+  },
+  {
+    id: 5,
+    src: hero5,
+    alt: 'Kenyan artisan weaving traditional kiondo baskets',
+    name: 'Maua Baskets',
+    location: 'Nairobi, Kenya',
   },
 ];
 
