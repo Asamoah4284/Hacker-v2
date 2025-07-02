@@ -158,39 +158,6 @@ const stats = [
   },
 ];
 
-const entrepreneurs = [
-  {
-    name: 'Amara Okafor',
-    tag: 'Fashion & Apparel',
-    company: "Amara's Textiles",
-    location: 'Lagos, Nigeria',
-    desc: 'Creating beautiful traditional fabrics with modern designs',
-    rating: 4.9,
-    products: 45,
-    sales: 1200,
-  },
-  {
-    name: 'Kwame Asante',
-    tag: 'Arts & Crafts',
-    company: 'Asante Crafts',
-    location: 'Accra, Ghana',
-    desc: 'Handcrafted wooden sculptures and home decor',
-    rating: 4.8,
-    products: 32,
-    sales: 890,
-  },
-  {
-    name: 'Fatima Al-Rashid',
-    tag: 'Beauty & Wellness',
-    company: 'Desert Rose Beauty',
-    location: 'Marrakech, Morocco',
-    desc: 'Natural beauty products inspired by Moroccan traditions',
-    rating: 4.9,
-    products: 28,
-    sales: 1500,
-  },
-];
-
 const platformFeatures = [
   {
     icon: (
@@ -235,6 +202,9 @@ export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [entrepreneurs, setEntrepreneurs] = useState([]);
+  const [entrepreneursLoading, setEntrepreneursLoading] = useState(true);
+  const [entrepreneursError, setEntrepreneursError] = useState(null);
 
   // Fetch featured products from API
   useEffect(() => {
@@ -281,6 +251,23 @@ export default function HomePage() {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Fetch 3 entrepreneurs (artisans) from API
+  useEffect(() => {
+    const fetchEntrepreneurs = async () => {
+      try {
+        setEntrepreneursLoading(true);
+        setEntrepreneursError(null);
+        const data = await apiService.getArtisans();
+        setEntrepreneurs((data.artisans || []).slice(0, 3));
+      } catch (err) {
+        setEntrepreneursError('Failed to fetch entrepreneurs');
+      } finally {
+        setEntrepreneursLoading(false);
+      }
+    };
+    fetchEntrepreneurs();
   }, []);
 
   return (
@@ -535,64 +522,73 @@ export default function HomePage() {
             Get to know the talented creators behind these amazing products
           </p>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-12'>
-            {entrepreneurs.map((e, i) => (
-              <div
-                key={i}
-                className='relative flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-10 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
-                style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
-              >
-                {/* Avatar Circle */}
-                <div className='w-20 h-20 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-3xl font-bold text-[#7a3419] shadow mb-4'>
-                  {e.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')}
-                </div>
-                {/* Gradient Badge */}
-                <span className='mb-2 px-4 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
-                  {e.tag}
-                </span>
-                {/* Name and Company */}
-                <h3 className='text-2xl font-extrabold mb-1 text-white text-center'>
-                  {e.name}
-                </h3>
-                <p className='text-base text-[#d4845b] mb-1 text-center'>
-                  {e.company}
-                </p>
-                <p className='text-sm text-[#a1a1aa] mb-2 text-center'>
-                  {e.location}
-                </p>
-                {/* Description */}
-                <p className='text-base mb-5 text-[#fdf3f0] text-center'>
-                  {e.desc}
-                </p>
-                {/* Divider */}
-                <div className='w-full h-px bg-white/10 my-4'></div>
-                {/* Stats Grid */}
-                <div className='grid grid-cols-3 gap-2 w-full text-center mb-5'>
-                  <div className='flex flex-col items-center'>
-                    <Star className='h-5 w-5 text-yellow-400 mb-1' />
-                    <span className='font-bold text-white'>{e.rating}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Rating</span>
-                  </div>
-                  <div className='flex flex-col items-center'>
-                    <ShoppingBag className='h-5 w-5 text-[#d4845b] mb-1' />
-                    <span className='font-bold text-white'>{e.products}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Products</span>
-                  </div>
-                  <div className='flex flex-col items-center'>
-                    <Users className='h-5 w-5 text-[#d4845b] mb-1' />
-                    <span className='font-bold text-white'>{e.sales}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Sales</span>
-                  </div>
-                </div>
-                <Button className='mt-auto w-full' size='sm' as='div'>
-                  <Link to='/entrepreneur' className='block w-full h-full'>
-                    View Profile
-                  </Link>
-                </Button>
+            {entrepreneursLoading ? (
+              <div className='col-span-3 text-center text-[#a1a1aa] py-12'>
+                Loading entrepreneurs...
               </div>
-            ))}
+            ) : entrepreneursError ? (
+              <div className='col-span-3 text-center text-red-400 py-12'>
+                {entrepreneursError}
+              </div>
+            ) : (
+              entrepreneurs.map((e, i) => (
+                <div
+                  key={e.id}
+                  className='relative flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-10 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
+                  style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
+                >
+                  {/* Avatar Circle */}
+                  <div className='w-20 h-20 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-3xl font-bold text-[#7a3419] shadow mb-4'>
+                    {e.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
+                  </div>
+                  {/* Gradient Badge */}
+                  <span className='mb-2 px-4 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
+                    {e.specialty}
+                  </span>
+                  {/* Name and Company */}
+                  <h3 className='text-2xl font-extrabold mb-1 text-white text-center'>
+                    {e.name}
+                  </h3>
+                  <p className='text-base text-[#d4845b] mb-1 text-center'>
+                    {e.location}
+                  </p>
+                  {/* Description */}
+                  <p className='text-base mb-5 text-[#fdf3f0] text-center'>
+                    {e.story}
+                  </p>
+                  {/* Divider */}
+                  <div className='w-full h-px bg-white/10 my-4'></div>
+                  {/* Stats Grid */}
+                  <div className='grid grid-cols-2 gap-2 w-full text-center mb-5'>
+                    <div className='flex flex-col items-center'>
+                      <ShoppingBag className='h-5 w-5 text-[#d4845b] mb-1' />
+                      <span className='font-bold text-white'>
+                        {e.productCount || (e.products ? e.products.length : 0)}
+                      </span>
+                      <span className='text-xs text-[#a1a1aa]'>Products</span>
+                    </div>
+                    <div className='flex flex-col items-center'>
+                      <Users className='h-5 w-5 text-[#d4845b] mb-1' />
+                      <span className='font-bold text-white'>
+                        {e.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                      <span className='text-xs text-[#a1a1aa]'>Status</span>
+                    </div>
+                  </div>
+                  <Button className='mt-auto w-full' size='sm' as='div'>
+                    <Link
+                      to={`/entrepreneur/${e.id}`}
+                      className='block w-full h-full'
+                    >
+                      View Profile
+                    </Link>
+                  </Button>
+                </div>
+              ))
+            )}
           </div>
           <div className='flex justify-center mt-12'>
             <Link to='/entrepreneur'>
