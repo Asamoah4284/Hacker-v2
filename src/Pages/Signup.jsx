@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import kolaLogo from '../assets/images/logo/kola-logo.png';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -134,9 +135,11 @@ export default function SignupPage() {
             {/* Logo */}
             <div className='text-center mb-8'>
               <div className='flex items-center justify-center gap-3 mb-4'>
-                <span className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-2xl font-bold shadow'>
-                  K
-                </span>
+                <img
+                  src={kolaLogo}
+                  alt='Kola Logo'
+                  className='w-12 h-12 object-contain'
+                />
                 <span className='font-bold text-3xl text-white'>Kola</span>
               </div>
               <h1 className='text-2xl font-bold text-white mb-2'>
