@@ -287,11 +287,11 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                                  {/* Chart */}
-                  <div className='h-80 flex items-end justify-between gap-4'>
+                <div className='h-80 w-full overflow-x-auto md:overflow-x-visible'>
+                  <div className='flex items-end justify-between gap-4 min-w-[400px] w-full'>
                     {(dashboardData?.referralData || []).length > 0 ? (
                       (dashboardData?.referralData || []).map((data, index) => (
-                        <div key={index} className='flex-1 flex flex-col items-center'>
+                        <div key={index} className='flex-1 flex flex-col items-center min-w-[48px]'>
                           <div className='w-full bg-white/5 rounded-t-lg relative group'>
                             <div 
                               className='bg-gradient-to-t from-[#d4845b] to-[#f8e1da] rounded-t-lg transition-all duration-500'
@@ -320,6 +320,7 @@ export default function Dashboard() {
                       </div>
                     )}
                   </div>
+                </div>
               </div>
 
               {/* Recent Activity & Active Links */}
@@ -621,12 +622,12 @@ export default function Dashboard() {
                   alt='Kola Logo'
                   className='h-16 w-auto object-contain relative z-10'
                   style={{
-                    filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
+                    filter: 'sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.2) contrast(1.1)',
                   }}
                 />
                 {/* Gradient overlay for left-to-right transition */}
                 <div 
-                  className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay pointer-events-none'
+                  className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-80 mix-blend-multiply pointer-events-none'
                 ></div>
               </div>
             </div>

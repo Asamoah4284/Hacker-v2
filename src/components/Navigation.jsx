@@ -117,12 +117,12 @@ export default function Navigation() {
               alt='Kola Logo'
               className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
               style={{
-                filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
+                filter: 'sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.2) contrast(1.1)',
               }}
             />
             {/* Gradient overlay for left-to-right transition */}
             <div 
-              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay group-hover:scale-105 transition-transform pointer-events-none'
+              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-80 mix-blend-multiply group-hover:scale-105 transition-transform pointer-events-none'
             ></div>
           </div>
         </NavLink>
