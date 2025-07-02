@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
-import kolaLogo from '../assets/images/logo/kola-logo.png';
+import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
 
 // Default empty data structure for dashboard
 const defaultData = {
@@ -615,19 +615,11 @@ export default function Dashboard() {
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
             <div className='flex items-center mb-4'>
-                            <div className='relative h-16 w-auto overflow-hidden rounded'>
-                <img
-                  src={kolaLogo}
-                  alt='Kola Logo'
-                  className='h-16 w-auto object-contain relative z-10'
-                  style={{
-                    filter: 'sepia(1) saturate(2.2) hue-rotate(-5deg) brightness(1.1) contrast(1.1)',
-                  }}
-                />
-                <div 
-                  className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d79d84] to-[#2c2828] opacity-85 mix-blend-multiply pointer-events-none rounded'
-                ></div>
-              </div>
+              <img
+                src={kolaLogo}
+                alt='Kola Logo'
+                className='h-16 w-auto object-contain'
+              />
             </div>
             <p className='text-lg text-[#a1a1aa] mb-4'>
               Empowering African entrepreneurs worldwide through a marketplace

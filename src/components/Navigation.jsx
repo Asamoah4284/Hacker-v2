@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import kolaLogo from '../assets/images/logo/kola-logo.png';
+import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
 
 function useCartCount() {
   const [cartCount, setCartCount] = useState(() => {
@@ -110,19 +110,11 @@ export default function Navigation() {
           )}
         </button>
         <NavLink to='/' className='flex items-center group'>
-          <div className='relative h-12 w-auto overflow-hidden rounded'>
-            <img
-              src={kolaLogo}
-              alt='Kola Logo'
-              className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
-              style={{
-                filter: 'sepia(1) saturate(2.2) hue-rotate(-5deg) brightness(1.1) contrast(1.1)',
-              }}
-            />
-            <div
-              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d79d84] to-[#2c2828] opacity-85 mix-blend-multiply group-hover:scale-105 transition-transform pointer-events-none rounded'
-            ></div>
-          </div>
+          <img
+            src={kolaLogo}
+            alt='Kola Logo'
+            className='h-12 w-auto object-contain group-hover:scale-105 transition-transform'
+          />
         </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
