@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import '../index.css'; // Ensure custom CSS is loaded
 
 // Import local hero images
 import hero1 from '../assets/images/hero/hero-1.webp';
@@ -276,7 +277,7 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <motion.section
-        className='relative py-28 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b]'
+        className='relative py-28 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] hero-pattern'
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
