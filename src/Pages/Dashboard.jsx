@@ -1,56 +1,65 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { apiService } from '../config/api';
 
-// Dummy data for dashboard
-const customerStats = {
-  totalPoints: 2847,
-  peopleReferred: 23,
-  activeLinks: 8,
-  averageQualityScore: 4.8
+// Default empty data structure for dashboard
+const defaultData = {
+  totalPoints: 0,
+  peopleReferred: 0,
+  activeLinks: [],
+  averageQualityScore: 0,
+  referralData: [],
+  recentReferrals: [],
+  leaderboardData: [],
+  analytics: {
+    totalClicks: 0,
+    successfulReferrals: 0,
+    conversionRate: '0%'
+  }
 };
 
-const referralData = [
-  { month: 'Jan', points: 120, products: 8, artisans: 3 },
-  { month: 'Feb', points: 180, products: 12, artisans: 5 },
-  { month: 'Mar', points: 220, products: 15, artisans: 7 },
-  { month: 'Apr', points: 280, products: 18, artisans: 9 },
-  { month: 'May', points: 320, products: 22, artisans: 11 },
-  { month: 'Jun', points: 380, products: 25, artisans: 13 }
-];
-
-const recentReferrals = [
-  { name: 'Sarah Johnson', date: '2024-06-15', points: 45, status: 'active' },
-  { name: 'Michael Chen', date: '2024-06-14', points: 32, status: 'active' },
-  { name: 'Emma Davis', date: '2024-06-13', points: 28, status: 'pending' },
-  { name: 'David Wilson', date: '2024-06-12', points: 51, status: 'active' },
-  { name: 'Lisa Brown', date: '2024-06-11', points: 38, status: 'active' }
-];
-
-const leaderboardData = [
-  { rank: 1, name: 'Ama Boateng', points: 1247, referrals: 45, avatar: 'AB' },
-  { rank: 2, name: 'Kwame Mensah', points: 1189, referrals: 42, avatar: 'KM' },
-  { rank: 3, name: 'Fatima Bello', points: 1156, referrals: 38, avatar: 'FB' },
-  { rank: 4, name: 'John Smith', points: 1098, referrals: 35, avatar: 'JS' },
-  { rank: 5, name: 'Maria Garcia', points: 1045, referrals: 32, avatar: 'MG' }
-];
-
-const activeLinks = [
-  { id: 1, name: 'Handcrafted Jewelry Collection', clicks: 156, conversions: 12, status: 'active' },
-  { id: 2, name: 'Organic Beauty Products', clicks: 89, conversions: 8, status: 'active' },
-  { id: 3, name: 'Traditional Fashion Line', clicks: 234, conversions: 19, status: 'active' },
-  { id: 4, name: 'Artisan Home Decor', clicks: 67, conversions: 5, status: 'paused' },
-  { id: 5, name: 'African Coffee & Tea', clicks: 123, conversions: 11, status: 'active' }
-];
-
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Get token from localStorage (stored as 'authToken' during login)
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          // Redirect to login if no token found
+          navigate('/login');
+          return;
+        }
+
+        const data = await apiService.getDashboardData(token);
+        setDashboardData(data);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
   }, []);
 
   const formatTime = (date) => {
@@ -61,6 +70,53 @@ export default function Dashboard() {
       second: '2-digit'
     });
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userData');
+    navigate('/login');
+  };
+
+  // Get user data from localStorage
+  const userEmail = localStorage.getItem('userEmail');
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='w-16 h-16 border-4 border-[#d4845b] border-t-transparent rounded-full animate-spin mx-auto mb-4'></div>
+          <p className='text-[#a1a1aa] text-lg'>Loading dashboard data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white flex items-center justify-center'>
+        <div className='text-center max-w-md mx-auto px-4'>
+          <div className='w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <svg className='w-8 h-8 text-red-400' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+              <path d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z' />
+            </svg>
+          </div>
+          <h2 className='text-2xl font-bold text-white mb-2'>Error Loading Dashboard</h2>
+          <p className='text-[#a1a1aa] mb-6'>{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className='px-6 py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
@@ -87,12 +143,38 @@ export default function Dashboard() {
           <div className='text-sm text-[#a1a1aa] font-mono'>
             {formatTime(currentTime)}
           </div>
-          <button className='w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-[#d4845b]/80 text-[#a1a1aa] hover:text-white transition-colors'>
-            <svg className='w-6 h-6' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
-              <circle cx='12' cy='8' r='4' />
-              <path d='M6 20v-2a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v2' />
-            </svg>
-          </button>
+          <div className='relative group'>
+            <button className='flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 hover:bg-[#d4845b]/80 text-[#a1a1aa] hover:text-white transition-colors'>
+              <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
+                {userData.name ? userData.name.charAt(0).toUpperCase() : userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <span className='hidden md:block text-sm font-medium'>
+                {userData.name || userEmail || 'User'}
+              </span>
+              <svg className='w-4 h-4' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                <path d='M19 9l-7 7-7-7' />
+              </svg>
+            </button>
+            
+            {/* Dropdown Menu */}
+            <div className='absolute right-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50'>
+              <div className='p-3 border-b border-white/10'>
+                <p className='text-sm font-medium text-white'>{userData.name || 'User'}</p>
+                <p className='text-xs text-[#a1a1aa]'>{userEmail}</p>
+              </div>
+              <div className='p-1'>
+                <button
+                  onClick={handleLogout}
+                  className='w-full text-left px-3 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2'
+                >
+                  <svg className='w-4 h-4' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                    <path d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1' />
+                  </svg>
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </nav>
 
@@ -130,7 +212,9 @@ export default function Dashboard() {
                 </div>
                 <span className='text-sm text-[#a1a1aa]'>+12%</span>
               </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>{customerStats.totalPoints.toLocaleString()}</h3>
+              <h3 className='text-2xl font-bold text-white mb-1'>
+                {(dashboardData?.totalPoints || 0).toLocaleString()}
+              </h3>
               <p className='text-[#a1a1aa]'>Total Points</p>
             </div>
 
@@ -144,7 +228,9 @@ export default function Dashboard() {
                 </div>
                 <span className='text-sm text-[#10b981]'>+8%</span>
               </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>{customerStats.peopleReferred}</h3>
+              <h3 className='text-2xl font-bold text-white mb-1'>
+                {dashboardData?.peopleReferred || 0}
+              </h3>
               <p className='text-[#a1a1aa]'>People Referred</p>
             </div>
 
@@ -158,7 +244,9 @@ export default function Dashboard() {
                 </div>
                 <span className='text-sm text-[#3b82f6]'>+3</span>
               </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>{customerStats.activeLinks}</h3>
+              <h3 className='text-2xl font-bold text-white mb-1'>
+                {dashboardData?.activeLinks || 0}
+              </h3>
               <p className='text-[#a1a1aa]'>Active Links</p>
             </div>
 
@@ -172,7 +260,9 @@ export default function Dashboard() {
                 </div>
                 <span className='text-sm text-[#f59e0b]'>+0.2</span>
               </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>{customerStats.averageQualityScore}</h3>
+              <h3 className='text-2xl font-bold text-white mb-1'>
+                {dashboardData?.averageQualityScore || 0}
+              </h3>
               <p className='text-[#a1a1aa]'>Quality Score</p>
             </div>
           </div>
@@ -216,25 +306,39 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                {/* Chart */}
-                <div className='h-80 flex items-end justify-between gap-4'>
-                  {referralData.map((data, index) => (
-                    <div key={index} className='flex-1 flex flex-col items-center'>
-                      <div className='w-full bg-white/5 rounded-t-lg relative group'>
-                        <div 
-                          className='bg-gradient-to-t from-[#d4845b] to-[#f8e1da] rounded-t-lg transition-all duration-500'
-                          style={{ height: `${(data.points / 400) * 100}%` }}
-                        ></div>
-                        <div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'>
-                          <div className='bg-black/80 text-white text-xs px-2 py-1 rounded'>
-                            {data.points} pts
+                                  {/* Chart */}
+                  <div className='h-80 flex items-end justify-between gap-4'>
+                    {(dashboardData?.referralData || []).length > 0 ? (
+                      (dashboardData?.referralData || []).map((data, index) => (
+                        <div key={index} className='flex-1 flex flex-col items-center'>
+                          <div className='w-full bg-white/5 rounded-t-lg relative group'>
+                            <div 
+                              className='bg-gradient-to-t from-[#d4845b] to-[#f8e1da] rounded-t-lg transition-all duration-500'
+                              style={{ height: `${(data.points / 400) * 100}%` }}
+                            ></div>
+                            <div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'>
+                              <div className='bg-black/80 text-white text-xs px-2 py-1 rounded'>
+                                {data.points} pts
+                              </div>
+                            </div>
                           </div>
+                          <span className='text-sm text-[#a1a1aa] mt-2'>{data.month}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className='flex-1 flex items-center justify-center h-full'>
+                        <div className='text-center'>
+                          <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
+                            <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                              <path d='M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' />
+                            </svg>
+                          </div>
+                          <p className='text-[#a1a1aa]'>No referral data available</p>
+                          <p className='text-sm text-[#71717a]'>Start referring to see your growth</p>
                         </div>
                       </div>
-                      <span className='text-sm text-[#a1a1aa] mt-2'>{data.month}</span>
-                    </div>
-                  ))}
-                </div>
+                    )}
+                  </div>
               </div>
 
               {/* Recent Activity & Active Links */}
@@ -243,29 +347,41 @@ export default function Dashboard() {
                 <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/10'>
                   <h3 className='text-xl font-bold text-white mb-6'>Recent Referrals</h3>
                   <div className='space-y-4'>
-                    {recentReferrals.map((referral, index) => (
-                      <div key={index} className='flex items-center justify-between p-4 bg-white/5 rounded-xl'>
-                        <div className='flex items-center gap-3'>
-                          <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
-                            {referral.name.split(' ').map(n => n[0]).join('')}
+                    {(dashboardData?.recentReferrals || []).length > 0 ? (
+                      (dashboardData?.recentReferrals || []).map((referral, index) => (
+                        <div key={index} className='flex items-center justify-between p-4 bg-white/5 rounded-xl'>
+                          <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
+                              {referral.name.split(' ').map(n => n[0]).join('')}
+                            </div>
+                            <div>
+                              <p className='font-medium text-white'>{referral.name}</p>
+                              <p className='text-sm text-[#a1a1aa]'>{referral.date}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className='font-medium text-white'>{referral.name}</p>
-                            <p className='text-sm text-[#a1a1aa]'>{referral.date}</p>
+                          <div className='text-right'>
+                            <p className='font-bold text-[#d4845b]'>+{referral.points} pts</p>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              referral.status === 'active' 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : 'bg-yellow-500/20 text-yellow-400'
+                            }`}>
+                              {referral.status}
+                            </span>
                           </div>
                         </div>
-                        <div className='text-right'>
-                          <p className='font-bold text-[#d4845b]'>+{referral.points} pts</p>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            referral.status === 'active' 
-                              ? 'bg-green-500/20 text-green-400' 
-                              : 'bg-yellow-500/20 text-yellow-400'
-                          }`}>
-                            {referral.status}
-                          </span>
+                      ))
+                    ) : (
+                      <div className='text-center py-8'>
+                        <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
+                          <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                            <path d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' />
+                          </svg>
                         </div>
+                        <p className='text-[#a1a1aa] mb-2'>No recent referrals</p>
+                        <p className='text-sm text-[#71717a]'>Share your links to start earning</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
 
@@ -273,27 +389,39 @@ export default function Dashboard() {
                 <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-6 border border-white/10'>
                   <h3 className='text-xl font-bold text-white mb-6'>Active Links</h3>
                   <div className='space-y-4'>
-                    {activeLinks.map((link) => (
-                      <div key={link.id} className='p-4 bg-white/5 rounded-xl'>
-                        <div className='flex items-center justify-between mb-2'>
-                          <h4 className='font-medium text-white'>{link.name}</h4>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            link.status === 'active' 
-                              ? 'bg-green-500/20 text-green-400' 
-                              : 'bg-yellow-500/20 text-yellow-400'
-                          }`}>
-                            {link.status}
-                          </span>
+                    {(dashboardData?.activeLinks || []).length > 0 ? (
+                      (dashboardData?.activeLinks || []).map((link) => (
+                        <div key={link.id} className='p-4 bg-white/5 rounded-xl'>
+                          <div className='flex items-center justify-between mb-2'>
+                            <h4 className='font-medium text-white'>{link.name}</h4>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              link.status === 'active' 
+                                ? 'bg-green-500/20 text-green-400' 
+                                : 'bg-yellow-500/20 text-yellow-400'
+                            }`}>
+                              {link.status}
+                            </span>
+                          </div>
+                          <div className='flex items-center justify-between text-sm text-[#a1a1aa]'>
+                            <span>{link.clicks} clicks</span>
+                            <span>{link.conversions} conversions</span>
+                            <span className='text-[#d4845b] font-medium'>
+                              {((link.conversions / link.clicks) * 100).toFixed(1)}%
+                            </span>
+                          </div>
                         </div>
-                        <div className='flex items-center justify-between text-sm text-[#a1a1aa]'>
-                          <span>{link.clicks} clicks</span>
-                          <span>{link.conversions} conversions</span>
-                          <span className='text-[#d4845b] font-medium'>
-                            {((link.conversions / link.clicks) * 100).toFixed(1)}%
-                          </span>
+                      ))
+                    ) : (
+                      <div className='text-center py-8'>
+                        <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
+                          <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                            <path d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' />
+                          </svg>
                         </div>
+                        <p className='text-[#a1a1aa] mb-2'>No active links</p>
+                        <p className='text-sm text-[#71717a]'>Create your first referral link</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -307,15 +435,21 @@ export default function Dashboard() {
                 <h2 className='text-2xl font-bold text-white mb-6'>Referral Analytics</h2>
                 <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                   <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#d4845b] mb-2'>156</div>
+                    <div className='text-3xl font-bold text-[#d4845b] mb-2'>
+                      {dashboardData?.analytics?.totalClicks || 0}
+                    </div>
                     <div className='text-[#a1a1aa]'>Total Clicks</div>
                   </div>
                   <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#10b981] mb-2'>23</div>
+                    <div className='text-3xl font-bold text-[#10b981] mb-2'>
+                      {dashboardData?.analytics?.successfulReferrals || 0}
+                    </div>
                     <div className='text-[#a1a1aa]'>Successful Referrals</div>
                   </div>
                   <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#3b82f6] mb-2'>14.7%</div>
+                    <div className='text-3xl font-bold text-[#3b82f6] mb-2'>
+                      {dashboardData?.analytics?.conversionRate || '0%'}
+                    </div>
                     <div className='text-[#a1a1aa]'>Conversion Rate</div>
                   </div>
                 </div>
@@ -336,7 +470,7 @@ export default function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {recentReferrals.map((referral, index) => (
+                      {(dashboardData?.recentReferrals || []).map((referral, index) => (
                         <tr key={index} className='border-b border-white/5'>
                           <td className='py-4'>
                             <div className='flex items-center gap-3'>
@@ -384,35 +518,47 @@ export default function Dashboard() {
                 </div>
                 
                 <div className='space-y-4'>
-                  {leaderboardData.map((user, index) => (
-                    <div key={index} className={`flex items-center justify-between p-6 rounded-xl transition-all ${
-                      index === 0 ? 'bg-gradient-to-r from-[#d4845b]/20 to-[#f8e1da]/10 border border-[#d4845b]/30' : 'bg-white/5 hover:bg-white/10'
-                    }`}>
-                      <div className='flex items-center gap-4'>
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                          index === 0 ? 'bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] text-white' :
-                          index === 1 ? 'bg-gradient-to-br from-[#9ca3af] to-[#6b7280] text-white' :
-                          index === 2 ? 'bg-gradient-to-br from-[#d97706] to-[#b45309] text-white' :
-                          'bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419]'
-                        }`}>
-                          {index + 1}
+                  {(dashboardData?.leaderboardData || []).length > 0 ? (
+                    (dashboardData?.leaderboardData || []).map((user, index) => (
+                      <div key={index} className={`flex items-center justify-between p-6 rounded-xl transition-all ${
+                        index === 0 ? 'bg-gradient-to-r from-[#d4845b]/20 to-[#f8e1da]/10 border border-[#d4845b]/30' : 'bg-white/5 hover:bg-white/10'
+                      }`}>
+                        <div className='flex items-center gap-4'>
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                            index === 0 ? 'bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] text-white' :
+                            index === 1 ? 'bg-gradient-to-br from-[#9ca3af] to-[#6b7280] text-white' :
+                            index === 2 ? 'bg-gradient-to-br from-[#d97706] to-[#b45309] text-white' :
+                            'bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419]'
+                          }`}>
+                            {index + 1}
+                          </div>
+                          <div className='flex items-center gap-3'>
+                            <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
+                              {user.avatar}
+                            </div>
+                            <div>
+                              <p className='font-bold text-white'>{user.name}</p>
+                              <p className='text-sm text-[#a1a1aa]'>{user.referrals} referrals</p>
+                            </div>
+                          </div>
                         </div>
-                        <div className='flex items-center gap-3'>
-                          <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
-                            {user.avatar}
-                          </div>
-                          <div>
-                            <p className='font-bold text-white'>{user.name}</p>
-                            <p className='text-sm text-[#a1a1aa]'>{user.referrals} referrals</p>
-                          </div>
+                        <div className='text-right'>
+                          <p className='text-2xl font-bold text-[#d4845b]'>{user.points.toLocaleString()}</p>
+                          <p className='text-sm text-[#a1a1aa]'>points</p>
                         </div>
                       </div>
-                      <div className='text-right'>
-                        <p className='text-2xl font-bold text-[#d4845b]'>{user.points.toLocaleString()}</p>
-                        <p className='text-sm text-[#a1a1aa]'>points</p>
+                    ))
+                  ) : (
+                    <div className='text-center py-12'>
+                      <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
+                        <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                          <path d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' />
+                        </svg>
                       </div>
+                      <p className='text-[#a1a1aa] mb-2'>No leaderboard data</p>
+                      <p className='text-sm text-[#71717a]'>Community rankings will appear here</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -430,7 +576,9 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className='text-right'>
-                    <p className='text-2xl font-bold text-[#d4845b]'>{customerStats.totalPoints.toLocaleString()}</p>
+                    <p className='text-2xl font-bold text-[#d4845b]'>
+                      {(dashboardData?.totalPoints || 0).toLocaleString()}
+                    </p>
                     <p className='text-sm text-[#a1a1aa]'>your points</p>
                   </div>
                 </div>
