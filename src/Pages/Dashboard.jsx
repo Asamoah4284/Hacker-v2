@@ -286,11 +286,11 @@ export default function Dashboard() {
                   </div>
                 </div>
                 
-                                  {/* Chart */}
-                  <div className='h-80 flex items-end justify-between gap-4'>
+                <div className='h-80 w-full overflow-x-auto md:overflow-x-visible'>
+                  <div className='flex items-end justify-between gap-4 min-w-[400px] w-full'>
                     {(dashboardData?.referralData || []).length > 0 ? (
                       (dashboardData?.referralData || []).map((data, index) => (
-                        <div key={index} className='flex-1 flex flex-col items-center'>
+                        <div key={index} className='flex-1 flex flex-col items-center min-w-[48px]'>
                           <div className='w-full bg-white/5 rounded-t-lg relative group'>
                             <div 
                               className='bg-gradient-to-t from-[#d4845b] to-[#f8e1da] rounded-t-lg transition-all duration-500'
@@ -319,6 +319,7 @@ export default function Dashboard() {
                       </div>
                     )}
                   </div>
+                </div>
               </div>
 
               {/* Recent Activity & Active Links */}

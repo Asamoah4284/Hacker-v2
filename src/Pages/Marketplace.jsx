@@ -26,8 +26,6 @@ export default function Marketplace() {
   const [searchTerm, setSearchTerm] = useState('');
   const [addToCartMsg, setAddToCartMsg] = useState('');
   const navigate = useNavigate();
-  const [shopLoading, setShopLoading] = useState('');
-  const [shopError, setShopError] = useState('');
   const [featuredSellers, setFeaturedSellers] = useState([]);
 
   // Fetch products from API
@@ -145,24 +143,6 @@ export default function Marketplace() {
     setAddToCartMsg(`${product.name} added to cart!`);
     setTimeout(() => setAddToCartMsg(''), 1500);
     window.dispatchEvent(new Event('storage'));
-  };
-
-  const handleViewShop = async (sellerName) => {
-    setShopLoading(sellerName);
-    setShopError('');
-    try {
-      const artisans = await apiService.getArtisans();
-      const found = artisans.find(a => a.name === sellerName);
-      if (found) {
-        navigate(`/entrepreneur/${found.id}/dashboard`);
-      } else {
-        setShopError('Entrepreneur not found.');
-      }
-    } catch (err) {
-      setShopError('Failed to fetch entrepreneur data.');
-    } finally {
-      setShopLoading('');
-    }
   };
 
   return (
@@ -459,14 +439,10 @@ export default function Marketplace() {
                 </div>
                 <button
                   className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
-                  onClick={() => handleViewShop(seller.name)}
-                  disabled={shopLoading === seller.name}
+                  onClick={() => navigate(`/entrepreneur/${seller.id}/dashboard`)}
                 >
-                  {shopLoading === seller.name ? 'Loading...' : 'View Shop'}
+                  View Shop
                 </button>
-                {shopError && (
-                  <div className='text-red-400 text-sm mt-2'>{shopError}</div>
-                )}
               </div>
             ))}
           </div>
