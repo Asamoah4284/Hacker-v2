@@ -56,7 +56,9 @@ export default function Marketplace() {
         const data = await apiService.getArtisans();
         const artisans = data.artisans || [];
         // Sort by rating descending, then take first 3
-        const sorted = [...artisans].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        const sorted = [...artisans].sort(
+          (a, b) => (b.rating || 0) - (a.rating || 0)
+        );
         setFeaturedSellers(sorted.slice(0, 3));
       } catch (err) {
         // fallback: no featured sellers
@@ -152,7 +154,7 @@ export default function Marketplace() {
     setShopError('');
     try {
       const artisans = await apiService.getArtisans();
-      const found = artisans.find(a => a.name === sellerName);
+      const found = artisans.find((a) => a.name === sellerName);
       if (found) {
         navigate(`/entrepreneur/${found.id}/dashboard`);
       } else {
@@ -201,7 +203,7 @@ export default function Marketplace() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='w-full px-6 py-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl text-white placeholder-[#a1a1aa] focus:outline-none focus:border-[#d4845b] transition-colors'
               />
-              <button 
+              <button
                 type='submit'
                 className='absolute right-2 top-2 w-10 h-10 flex items-center justify-center rounded-xl bg-[#d4845b] text-white hover:bg-[#b8734a] transition-colors'
               >
@@ -285,8 +287,8 @@ export default function Marketplace() {
           ) : error ? (
             <div className='text-center py-20'>
               <p className='text-red-400 mb-4'>{error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
+              <button
+                onClick={() => window.location.reload()}
                 className='px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
               >
                 Try Again
@@ -305,8 +307,8 @@ export default function Marketplace() {
                       {/* Product Image */}
                       <div className='relative h-64 bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center overflow-hidden'>
                         {product.imageUrl ? (
-                          <img 
-                            src={product.imageUrl} 
+                          <img
+                            src={product.imageUrl}
                             alt={product.name}
                             className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
                           />
@@ -321,7 +323,7 @@ export default function Marketplace() {
                           </div>
                         )}
                       </div>
-                      
+
                       {/* Product Info */}
                       <div className='p-6'>
                         <div className='flex items-center gap-2 mb-2'>
@@ -345,30 +347,30 @@ export default function Marketplace() {
                             ({transformedProduct.reviews})
                           </span>
                         </div>
-                        
+
                         <h3 className='font-bold text-lg text-white mb-2 group-hover:text-[#d4845b] transition-colors'>
                           {product.name}
                         </h3>
-                        
+
                         <p className='text-[#a1a1aa] text-sm mb-3'>
                           by {transformedProduct.seller} •{' '}
                           {transformedProduct.location}
                         </p>
-                        
+
                         <div className='flex items-center justify-between mb-4'>
                           <div className='flex items-center gap-2'>
                             <span className='text-2xl font-bold text-white'>
-                              ${product.price}
+                              GH₵{product.price}
                             </span>
                             {transformedProduct.originalPrice >
                               product.price && (
-                              <span className='text-lg text-[#a1a1aa] line-through'>
-                                ${transformedProduct.originalPrice}
+                              <span className='text-base line-through text-[#a1a1aa]'>
+                                GH₵{transformedProduct.originalPrice}
                               </span>
                             )}
                           </div>
                           <span className='text-sm text-[#d4845b] font-medium'>
-                            {transformedProduct.originalPrice > product.price 
+                            {transformedProduct.originalPrice > product.price
                               ? `${Math.round(
                                   ((transformedProduct.originalPrice -
                                     product.price) /
@@ -378,7 +380,7 @@ export default function Marketplace() {
                               : ''}
                           </span>
                         </div>
-                        
+
                         <button
                           className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
                           onClick={() => handleAddToCart(transformedProduct)}
@@ -390,13 +392,13 @@ export default function Marketplace() {
                   );
                 })}
               </div>
-              
+
               {filteredAndSortedProducts.length === 0 && !loading && (
                 <div className='text-center py-20'>
                   <p className='text-[#a1a1aa] text-xl'>
                     No products found matching your criteria.
                   </p>
-                  <button 
+                  <button
                     onClick={() => {
                       setSelectedCategory('All Products');
                       setSearchTerm('');
@@ -433,28 +435,43 @@ export default function Marketplace() {
                 <div className='flex items-center gap-4 mb-6'>
                   <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419]'>
                     {seller.imageUrl ? (
-                      <img src={seller.imageUrl} alt={seller.name} className='w-full h-full object-cover rounded-full' />
+                      <img
+                        src={seller.imageUrl}
+                        alt={seller.name}
+                        className='w-full h-full object-cover rounded-full'
+                      />
                     ) : (
-                      seller.name.split(' ').map((n) => n[0]).join('')
+                      seller.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
                     )}
                   </div>
                   <div>
-                    <h3 className='font-bold text-xl text-white'>{seller.name}</h3>
+                    <h3 className='font-bold text-xl text-white'>
+                      {seller.name}
+                    </h3>
                     <p className='text-[#a1a1aa]'>{seller.location}</p>
                   </div>
                 </div>
                 <div className='space-y-3 mb-6'>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Products:</span>
-                    <span className='text-white font-semibold'>{seller.products?.length || 0}</span>
+                    <span className='text-white font-semibold'>
+                      {seller.products?.length || 0}
+                    </span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Rating:</span>
-                    <span className='text-white font-semibold'>{seller.rating?.toFixed(1) || 'N/A'} ⭐</span>
+                    <span className='text-white font-semibold'>
+                      {seller.rating?.toFixed(1) || 'N/A'} ⭐
+                    </span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Specialty:</span>
-                    <span className='text-[#d4845b] font-semibold'>{seller.specialty}</span>
+                    <span className='text-[#d4845b] font-semibold'>
+                      {seller.specialty}
+                    </span>
                   </div>
                 </div>
                 <button

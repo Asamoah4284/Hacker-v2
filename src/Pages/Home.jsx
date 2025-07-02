@@ -475,11 +475,11 @@ export default function HomePage() {
                     </div>
                     <div className='flex items-end gap-2 mb-4'>
                       <span className='text-2xl font-bold text-white'>
-                        ${product.price}
+                        GH₵{product.price}
                       </span>
                       {product.oldPrice && (
                         <span className='text-base line-through text-[#a1a1aa]'>
-                          ${product.oldPrice}
+                          GH₵{product.oldPrice}
                         </span>
                       )}
                     </div>

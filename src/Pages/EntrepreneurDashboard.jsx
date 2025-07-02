@@ -140,7 +140,7 @@ export default function EntrepreneurDashboard() {
                           {product.name}
                         </div>
                         <div className='text-[#d4845b] font-semibold text-base'>
-                          ${product.price}
+                          GH₵{product.price}
                         </div>
                         <div className='text-[#a1a1aa] text-sm'>
                           {product.description || 'No description.'}
