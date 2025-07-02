@@ -8,6 +8,9 @@ export default function CartsPage() {
   const [cart, setCart] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState('');
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [referralLink, setReferralLink] = useState('');
+  const [copied, setCopied] = useState(false);
   const didLoad = useRef(false);
   const navigate = useNavigate();
 
@@ -163,6 +166,36 @@ export default function CartsPage() {
     }
   };
 
+  // Function to generate referral link
+  const generateReferralLink = () => {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const userId = userData?.id || userData?._id || 'anonymous';
+    const baseUrl = window.location.origin;
+    const referralCode = `${userId}_${Date.now()}`;
+    const link = `${baseUrl}/?ref=${referralCode}`;
+    
+    console.log('Generated referral link:', link);
+    console.log('User data for referral:', userData);
+    
+    // Store referral data in localStorage
+    localStorage.setItem('referralCode', referralCode);
+    localStorage.setItem('referralLink', link);
+    
+    return link;
+  };
+
+  // Function to copy referral link to clipboard
+  const copyReferralLink = async () => {
+    try {
+      await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      console.log('Referral link copied to clipboard');
+    } catch (err) {
+      console.error('Failed to copy referral link:', err);
+    }
+  };
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b] text-gray-800 dark:text-white'>
       <Navigation />
@@ -283,6 +316,67 @@ export default function CartsPage() {
           </div>
         </div>
       </section>
+      
+      {/* Referral Modal */}
+      {showReferralModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#d4845b] to-[#f1c3b5] flex items-center justify-center">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              </div>
+              
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Share the Artisans Circle!
+              </h2>
+              
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Thank you for your purchase! Help us grow our community by sharing this referral link with your friends and family.
+              </p>
+              
+              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={referralLink}
+                    readOnly
+                    className="flex-1 bg-transparent text-sm text-gray-700 dark:text-gray-300 outline-none"
+                  />
+                  <button
+                    onClick={copyReferralLink}
+                    className="px-3 py-1 rounded-lg bg-[#d4845b] text-white text-sm font-semibold hover:bg-[#f1c3b5] transition-colors"
+                  >
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowReferralModal(false);
+                    setTimeout(() => {
+                      navigate('/orders');
+                    }, 300);
+                  }}
+                  className="flex-1 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  View Orders
+                </button>
+                <button
+                  onClick={() => setShowReferralModal(false)}
+                  className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200"
+                >
+                  Continue Shopping
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );
