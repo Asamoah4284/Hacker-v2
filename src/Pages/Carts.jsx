@@ -1,9 +1,8 @@
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useState, useEffect, useRef } from 'react';
-import { usePaystackPayment } from 'react-paystack';
-import { apiService } from '../config/api';
 import { useNavigate } from 'react-router-dom';
+import { usePaystackPayment } from 'react-paystack';
 
 export default function CartsPage() {
   const [cart, setCart] = useState([]);
@@ -67,6 +66,89 @@ export default function CartsPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Paystack config (recomputed on each render)
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  const paystackConfig = {
+    reference: new Date().getTime().toString(),
+    email: userData?.email || localStorage.getItem('userEmail') || 'customer@example.com',
+    amount: total * 15 * 100, // 1 USD = 15 GHS, Paystack expects amount in pesewas
+    currency: 'GHS',
+    publicKey: 'pk_test_c827720756c17a27051917f50a45e18e1cb423ae',
+  };
+
+  const initializePayment = usePaystackPayment(paystackConfig);
+
+  const onPaystackSuccess = (reference) => {
+    setCheckoutMessage('Payment successful! Your order has been placed.');
+    setCart([]);
+    localStorage.removeItem('cart');
+    setTimeout(() => {
+      navigate('/orders');
+    }, 2000);
+  };
+
+  const onPaystackClose = () => {
+    setCheckoutMessage('Payment was cancelled.');
+  };
+
+  const handleCheckout = async () => {
+    if (cart.length === 0) return;
+    setCheckoutMessage('');
+    setIsProcessing(true);
+
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    let userId = userData?.id;
+    if (!userId) {
+      try {
+        const user = JSON.parse(localStorage.getItem('user')) || JSON.parse(localStorage.getItem('currentUser'));
+        userId = user?.id || user?._id || user?.userId;
+      } catch {}
+    }
+
+    // Check if we have a valid userId
+    if (!userId) {
+      setCheckoutMessage('User not logged in. Please log in to complete your order.');
+      setIsProcessing(false);
+      return;
+    }
+
+    const orderData = {
+      userId: userId,
+      items: cart,
+      total: total,
+      reference: `manual_checkout_${Date.now()}`,
+      status: 'pending'
+    };
+
+    console.log('Sending order data:', orderData);
+
+    try {
+      const response = await fetch('https://citsa-hackathon-2.onrender.com/app/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        // Order created, now show Paystack modal
+        initializePayment(onPaystackSuccess, onPaystackClose);
+      } else {
+        const errorData = await response.text();
+        console.error('Server error:', errorData);
+        setCheckoutMessage(`Error: ${response.status} - ${errorData}`);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      setCheckoutMessage('Network error. Please check your connection and try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b] text-gray-800 dark:text-white'>
@@ -152,16 +234,27 @@ export default function CartsPage() {
                 </table>
               </div>
             )}
+            {checkoutMessage && (
+              <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${
+                checkoutMessage.includes('successful') 
+                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
+                  : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+              }`}>
+                {checkoutMessage}
+              </div>
+            )}
+            
             <div className='flex flex-col md:flex-row justify-between items-center mt-8 gap-6'>
               <div className='text-xl font-bold'>
                 Cart Total:{' '}
                 <span className='text-[#d4845b]'>${total.toFixed(2)}</span>
               </div>
               <button
+                onClick={handleCheckout}
+                disabled={cart.length === 0 || isProcessing}
                 className='px-8 py-3 rounded-xl bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold text-lg hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
-                disabled={cart.length === 0}
               >
-                Proceed to Checkout
+                {isProcessing ? 'Processing...' : 'Proceed to Checkout'}
               </button>
             </div>
           </div>
