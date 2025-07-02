@@ -2,7 +2,6 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePaystackPayment } from 'react-paystack';
 
 export default function CartsPage() {
   const [cart, setCart] = useState([]);
@@ -81,22 +80,11 @@ export default function CartsPage() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Paystack config (recomputed on each render)
+  // Placeholder payment config (Paystack removed)
   const userData = JSON.parse(localStorage.getItem('userData'));
-  const paystackConfig = {
-    reference: new Date().getTime().toString(),
-    email:
-      userData?.email ||
-      localStorage.getItem('userEmail') ||
-      'customer@example.com',
-    amount: total * 100, // 1 USD = 15 GHS, Paystack expects amount in pesewas
-    currency: 'GHS',
-    publicKey: 'pk_test_c827720756c17a27051917f50a45e18e1cb423ae',
-  };
-
-  const initializePayment = usePaystackPayment(paystackConfig);
-
-  const onPaystackSuccess = () => {
+  
+  // Placeholder payment success handler
+  const onPaymentSuccess = () => {
     console.log('Payment successful, showing referral modal');
     setCheckoutMessage('Payment successful! Your order has been placed.');
     
@@ -112,7 +100,8 @@ export default function CartsPage() {
     console.log('Referral modal should now be visible');
   };
 
-  const onPaystackClose = () => {
+  // Placeholder payment close handler
+  const onPaymentClose = () => {
     console.log('Payment modal closed');
     setCheckoutMessage('Payment was cancelled.');
     // If cart is empty (meaning order was successful), show success page
@@ -177,8 +166,13 @@ export default function CartsPage() {
         // Order created, clear cart immediately
         setCart([]);
         localStorage.removeItem('cart');
-        // Now show Paystack modal
-        initializePayment(onPaystackSuccess, onPaystackClose);
+        
+        // Placeholder: Simulate payment success (Paystack removed)
+        console.log('Order created successfully, simulating payment success');
+        setTimeout(() => {
+          onPaymentSuccess();
+        }, 1000);
+        
         navigate('/success')
       } else {
         const errorData = await response.text();
