@@ -614,19 +614,17 @@ export default function Dashboard() {
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
             <div className='flex items-center mb-4'>
-              <div className='relative h-16 w-auto overflow-hidden'>
-                {/* Base logo with terracotta filter */}
+                            <div className='relative h-16 w-auto overflow-hidden rounded'>
                 <img
                   src={kolaLogo}
                   alt='Kola Logo'
                   className='h-16 w-auto object-contain relative z-10'
                   style={{
-                    filter: 'sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.2) contrast(1.1)',
+                    filter: 'sepia(1) saturate(2.2) hue-rotate(-5deg) brightness(1.1) contrast(1.1)',
                   }}
                 />
-                {/* Gradient overlay for left-to-right transition */}
                 <div 
-                  className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-80 mix-blend-multiply pointer-events-none'
+                  className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d79d84] to-[#2c2828] opacity-85 mix-blend-multiply pointer-events-none rounded'
                 ></div>
               </div>
             </div>
