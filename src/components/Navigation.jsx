@@ -110,29 +110,19 @@ export default function Navigation() {
           )}
         </button>
         <NavLink to='/' className='flex items-center group'>
-          <div className='relative h-12 w-auto'>
-            {/* Original logo with gradient overlay (Approach 1) */}
+          <div className='relative h-12 w-auto overflow-hidden'>
+            {/* Base logo with terracotta filter */}
             <img
               src={kolaLogo}
               alt='Kola Logo'
               className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
               style={{
-                filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
+                filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
               }}
             />
-            {/* Gradient overlay */}
+            {/* Gradient overlay for left-to-right transition */}
             <div 
-              className='absolute inset-0 h-12 w-auto bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b] rounded-lg opacity-60 mix-blend-color group-hover:scale-105 transition-transform'
-              style={{
-                maskImage: `url(${kolaLogo})`,
-                maskSize: 'contain',
-                maskRepeat: 'no-repeat',
-                maskPosition: 'center',
-                WebkitMaskImage: `url(${kolaLogo})`,
-                WebkitMaskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'center'
-              }}
+              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay group-hover:scale-105 transition-transform pointer-events-none'
             ></div>
           </div>
         </NavLink>
