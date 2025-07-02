@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import EntrepreneurDashboard from './EntrepreneurDashboard';
 
 export default function EntrepreneurPage() {
   const [artisans, setArtisans] = useState([]);
@@ -10,6 +11,10 @@ export default function EntrepreneurPage() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
+  const [selectedEntrepreneur, setSelectedEntrepreneur] = useState(null);
+  const [showDashboard, setShowDashboard] = useState(false);
+
+  const navigate = useNavigate();
 
   // Fetch artisans from API
   useEffect(() => {
@@ -69,6 +74,15 @@ export default function EntrepreneurPage() {
     specialty: artisan.specialty,
     productList: artisan.products || [],
   });
+
+  const handleViewProducts = (entrepreneur) => {
+    navigate(`/entrepreneur/${entrepreneur.id}/dashboard`);
+  };
+
+  const handleCloseDashboard = () => {
+    setShowDashboard(false);
+    setSelectedEntrepreneur(null);
+  };
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
@@ -281,7 +295,10 @@ export default function EntrepreneurPage() {
                       )}
                 
                 {/* Action Button */}
-                <button className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'>
+                <button 
+                  className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'
+                  onClick={() => handleViewProducts(artisan)}
+                >
                   View Products
                 </button>
               </div>
@@ -330,6 +347,13 @@ export default function EntrepreneurPage() {
           </div>
         </div>
       </section>
+
+      {showDashboard && selectedEntrepreneur && (
+        <EntrepreneurDashboard 
+          entrepreneur={selectedEntrepreneur} 
+          onClose={handleCloseDashboard} 
+        />
+      )}
 
       {/* Footer */}
       <Footer /> 
