@@ -1,12 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navigation() {
+  const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(() => {
     // Check localStorage for saved preference, default to dark mode
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : true;
   });
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
+
+  // Check if user is logged in
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  const userEmail = localStorage.getItem('userEmail');
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
 
   useEffect(() => {
     // Apply theme to document
@@ -19,8 +27,34 @@ export default function Navigation() {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
   }, [isDarkMode]);
 
+  // Close menu on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    }
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMenu]);
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleLogout = () => {
+    // Clear all authentication data
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userData');
+
+    // Redirect to home page
+    navigate('/');
   };
 
   return (
@@ -77,18 +111,134 @@ export default function Navigation() {
           )}
         </button>
 
-        <Link
-          to='/login'
-          className='text-gray-600 dark:text-gray-400 font-medium px-4 py-2 rounded-lg transition-colors hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20 focus:text-[#d4845b] focus:bg-[#f8e1da]/30 dark:focus:bg-[#d4845b]/20'
-        >
-          Login
-        </Link>
-        <Link
-          to='/signup'
-          className='bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold px-6 py-2 rounded-lg hover:from-[#f1c3b5] hover:to-[#d4845b] transform hover:scale-[1.02] transition-all duration-200 shadow-lg'
-        >
-          Sign Up
-        </Link>
+        {isLoggedIn ? (
+          <>
+            {/* Cart Icon */}
+            <Link
+              to='/cart'
+              className='relative w-9 h-9 flex items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 hover:bg-[#d4845b]/80 text-gray-600 dark:text-[#a1a1aa] hover:text-white transition-colors'
+              aria-label='View cart'
+            >
+              <svg
+                className='w-5 h-5'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                viewBox='0 0 24 24'
+              >
+                <circle cx='9' cy='21' r='1' />
+                <circle cx='20' cy='21' r='1' />
+                <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6' />
+              </svg>
+              <span className='absolute -top-1 -right-1 w-4 h-4 bg-[#d4845b] text-white text-xs font-bold rounded-full flex items-center justify-center shadow'>
+                1
+              </span>
+            </Link>
+            {/* User Avatar Dropdown */}
+            <div className='relative' ref={menuRef}>
+              <button
+                onClick={() => setShowMenu((v) => !v)}
+                className={`w-11 h-11 flex items-center justify-center rounded-full border-2 ${
+                  showMenu
+                    ? 'border-[#d4845b]'
+                    : 'border-gray-200 dark:border-[#d4845b]'
+                } bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:scale-105 active:scale-95 cursor-pointer`}
+                aria-label='User menu'
+                tabIndex={0}
+              >
+                {userData?.img ? (
+                  <img
+                    src={userData.img}
+                    alt={userData.name || userEmail || 'User'}
+                    className='w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-900'
+                  />
+                ) : (
+                  <span className='text-lg font-bold text-[#7a3419] drop-shadow-sm select-none'>
+                    {userData?.name
+                      ? userData.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                      : userEmail
+                      ? userEmail[0].toUpperCase()
+                      : 'U'}
+                  </span>
+                )}
+              </button>
+              {showMenu && (
+                <div className='absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-4 px-6 z-50 animate-fade-in-up'>
+                  <div className='flex items-center gap-3 mb-4'>
+                    <div className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-xl font-bold text-[#7a3419] shadow'>
+                      {userData?.img ? (
+                        <img
+                          src={userData.img}
+                          alt={userData.name || userEmail || 'User'}
+                          className='w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-900'
+                        />
+                      ) : userData?.name ? (
+                        userData.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                      ) : userEmail ? (
+                        userEmail[0].toUpperCase()
+                      ) : (
+                        'U'
+                      )}
+                    </div>
+                    <div className='flex-1 min-w-0'>
+                      <div className='text-xs text-gray-400 dark:text-gray-500 mb-1'>
+                        Signed in as
+                      </div>
+                      <div className='font-bold text-lg text-gray-800 dark:text-white truncate'>
+                        {userData?.name || 'User'}
+                      </div>
+                      <div className='text-sm text-gray-500 dark:text-gray-400 truncate'>
+                        {userEmail}
+                      </div>
+                    </div>
+                  </div>
+                  <Link
+                    to='/dashboard'
+                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-[#f8e1da] dark:hover:bg-[#d4845b]/20 transition-colors mb-2'
+                    onClick={() => setShowMenu(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to='/orders'
+                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-[#f8e1da] dark:hover:bg-[#d4845b]/20 transition-colors mb-2'
+                    onClick={() => setShowMenu(false)}
+                  >
+                    Orders
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className='w-full px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-200 mt-2'
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          // Not logged in - show login/signup
+          <div className='flex items-center gap-4'>
+            <Link
+              to='/login'
+              className='text-gray-600 dark:text-gray-400 font-medium px-4 py-2 rounded-lg transition-colors hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20 focus:text-[#d4845b] focus:bg-[#f8e1da]/30 dark:focus:bg-[#d4845b]/20'
+            >
+              Login
+            </Link>
+            <Link
+              to='/signup'
+              className='bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold px-6 py-2 rounded-lg hover:from-[#f1c3b5] hover:to-[#d4845b] transform hover:scale-[1.02] transition-all duration-200 shadow-lg'
+            >
+              Sign Up
+            </Link>
+          </div>
+        )}
       </div>
     </nav>
   );
