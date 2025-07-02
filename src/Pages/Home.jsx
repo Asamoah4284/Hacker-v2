@@ -315,12 +315,12 @@ export default function HomePage() {
           </div>
           {/* Right Column */}
           <div className='relative flex flex-col items-center animate-fade-in'>
-            <div className='relative min-h-[440px] w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl bg-white/10 backdrop-blur-lg border border-white/10 group transition-all duration-500 hover:scale-105'>
+            <div className='relative h-[440px] w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl bg-white/10 backdrop-blur-lg border border-white/10 group transition-all duration-500 hover:scale-105'>
               <img
                 key={currentImageIndex}
                 src={heroImages[currentImageIndex].src}
                 alt={heroImages[currentImageIndex].alt}
-                className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
+                className='absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
               />
               <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 rounded-b-3xl'>
                 <div className='text-white'>
