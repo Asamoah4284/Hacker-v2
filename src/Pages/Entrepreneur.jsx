@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import { useState, useEffect } from 'react';
+import { apiService } from '../config/api';
 
 // Dummy entrepreneur data
 const entrepreneurs = [
@@ -67,6 +69,65 @@ const entrepreneurs = [
 ];
 
 export default function EntrepreneurPage() {
+  const [artisans, setArtisans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch artisans from API
+  useEffect(() => {
+    const fetchArtisans = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getArtisans();
+        setArtisans(data.artisans || []);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch artisans. Please try again later.');
+        console.error('Error fetching artisans:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtisans();
+  }, []);
+
+  // Get unique specialties for filtering
+  const specialties = ['All Specialties', ...new Set(artisans.map(artisan => artisan.specialty))];
+
+  // Filter and search artisans
+  const filteredArtisans = artisans.filter(artisan => {
+    const matchesSpecialty = selectedSpecialty === 'All Specialties' || artisan.specialty === selectedSpecialty;
+    const matchesSearch = searchTerm === '' || 
+      artisan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artisan.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artisan.location.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSpecialty && matchesSearch;
+  });
+
+  // Handle search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Search is handled by the filter function above
+  };
+
+  // Transform API artisan to match component structure
+  const transformArtisan = (artisan) => ({
+    id: artisan.id,
+    name: artisan.name,
+    business: artisan.name + ' Crafts', // Generate business name
+    category: artisan.specialty,
+    img: artisan.imageUrl,
+    bio: artisan.story,
+    location: artisan.location,
+    rating: 4.5 + Math.random() * 0.5, // Generate random rating between 4.5-5.0
+    products: artisan.productCount || 0,
+    specialty: artisan.specialty,
+    productList: artisan.products || []
+  });
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
       {/* Top Navigation Bar (same as Home) */}
@@ -84,6 +145,49 @@ export default function EntrepreneurPage() {
             innovative entrepreneurs who are building businesses that make a
             difference.
           </p>
+          
+          {/* Search Bar */}
+          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto'>
+            <form onSubmit={handleSearch} className='relative w-full'>
+              <input
+                type='text'
+                placeholder='Search for artisans, specialties, or locations...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className='w-full px-6 py-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl text-white placeholder-[#a1a1aa] focus:outline-none focus:border-[#d4845b] transition-colors'
+              />
+              <button 
+                type='submit'
+                className='absolute right-2 top-2 w-10 h-10 flex items-center justify-center rounded-xl bg-[#d4845b] text-white hover:bg-[#b8734a] transition-colors'
+              >
+                <svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                  <circle cx='11' cy='11' r='8' />
+                  <path d='M21 21l-4.35-4.35' />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Filters Section */}
+      <section className='py-8 border-b border-white/10'>
+        <div className='container mx-auto px-8 md:px-16 xl:px-32'>
+          <div className='flex flex-wrap gap-3 justify-center'>
+            {specialties.map((specialty) => (
+              <button
+                key={specialty}
+                onClick={() => setSelectedSpecialty(specialty)}
+                className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                  selectedSpecialty === specialty
+                    ? 'bg-[#d4845b] text-white shadow-lg'
+                    : 'bg-white/10 text-[#a1a1aa] hover:bg-white/20 hover:text-white'
+                }`}
+              >
+                {specialty}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -180,6 +284,21 @@ export default function EntrepreneurPage() {
                 </button>
               </div>
             ))}
+            
+            {filteredArtisans.length === 0 && !loading && (
+              <div className='col-span-full text-center py-20'>
+                <p className='text-[#a1a1aa] text-xl'>No entrepreneurs found matching your criteria.</p>
+                <button 
+                  onClick={() => {
+                    setSelectedSpecialty('All Specialties');
+                    setSearchTerm('');
+                  }}
+                  className='mt-4 px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -40,49 +42,51 @@ export default function SignupPage() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white flex items-center justify-center p-4'>
-      {/* Background Accent */}
-      <div className='absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none'>
-        <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-10 rounded-full blur-3xl'></div>
-        <div className='absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-[#f1c3b5] opacity-10 rounded-full blur-3xl'></div>
-      </div>
+    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
+      <Navigation />
 
-      {/* Main Container */}
-      <div className='relative z-10 w-full max-w-md'>
-        {/* Logo */}
-        <div className='text-center mb-8'>
-          <div className='flex items-center justify-center gap-3 mb-4'>
-            <span className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-2xl font-bold shadow'>
-              K
-            </span>
-            <span className='font-bold text-3xl text-white'>Kola</span>
-          </div>
-          <h1 className='text-2xl font-bold text-white mb-2'>Join Our Community</h1>
-          <p className='text-[#a1a1aa]'>Start your entrepreneurial journey today</p>
-        </div>
+      {/* Signup Section */}
+      <section className='relative py-20 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b]'>
+        {/* Blurred Accent Shapes */}
+        <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
+                <div className='absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-[#f1c3b5] opacity-15 rounded-full blur-3xl pointer-events-none'></div>
 
-        {/* Progress Steps */}
-        <div className='flex items-center justify-center mb-8'>
-          {[1, 2, 3].map((stepNumber) => (
-            <div key={stepNumber} className='flex items-center'>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                step >= stepNumber 
-                  ? 'bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white' 
-                  : 'bg-white/10 text-[#a1a1aa]'
-              }`}>
-                {stepNumber}
+        <div className='container mx-auto px-8 md:px-16 xl:px-32 flex justify-center items-center min-h-[calc(100vh-200px)] relative z-10'>
+          <div className='w-full max-w-md'>
+            {/* Logo */}
+            <div className='text-center mb-8'>
+              <div className='flex items-center justify-center gap-3 mb-4'>
+                <span className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-2xl font-bold shadow'>
+                  K
+                </span>
+                <span className='font-bold text-3xl text-white'>Kola</span>
               </div>
-              {stepNumber < 3 && (
-                <div className={`w-12 h-0.5 mx-2 ${
-                  step > stepNumber ? 'bg-gradient-to-r from-[#d4845b] to-[#f1c3b5]' : 'bg-white/10'
-                }`}></div>
-              )}
+              <h1 className='text-2xl font-bold text-white mb-2'>Join Our Community</h1>
+              <p className='text-[#a1a1aa]'>Start your entrepreneurial journey today</p>
             </div>
-          ))}
-        </div>
 
-        {/* Form */}
-        <div className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8'>
+            {/* Progress Steps */}
+            <div className='flex items-center justify-center mb-8'>
+              {[1, 2, 3].map((stepNumber) => (
+                <div key={stepNumber} className='flex items-center'>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    step >= stepNumber 
+                      ? 'bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white' 
+                      : 'bg-white/10 text-[#a1a1aa]'
+                  }`}>
+                    {stepNumber}
+                  </div>
+                  {stepNumber < 3 && (
+                    <div className={`w-12 h-0.5 mx-2 ${
+                      step > stepNumber ? 'bg-gradient-to-r from-[#d4845b] to-[#f1c3b5]' : 'bg-white/10'
+                    }`}></div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Form */}
+            <div className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8'>
           <form onSubmit={handleSubmit} className='space-y-6'>
             {/* Step 1: Personal Information */}
             {step === 1 && (
@@ -300,16 +304,20 @@ export default function SignupPage() {
           </form>
         </div>
 
-        {/* Login Link */}
-        <div className='text-center mt-6'>
-          <p className='text-[#a1a1aa]'>
-            Already have an account?{' '}
-            <Link to='/login' className='text-[#d4845b] hover:underline font-medium'>
-              Sign in
-            </Link>
-          </p>
+            {/* Login Link */}
+            <div className='text-center mt-6'>
+              <p className='text-[#a1a1aa]'>
+                Already have an account?{' '}
+                <Link to='/login' className='text-[#d4845b] hover:underline font-medium'>
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <Footer />
     </div>
   );
 } 
