@@ -5,6 +5,7 @@ const API_BASE_URL = 'https://citsa-hackathon-2.onrender.com';
 export const API_ENDPOINTS = {
   PRODUCTS: `${API_BASE_URL}/public/products`,
   ARTISANS: `${API_BASE_URL}/public/artisans`,
+  LOGIN: `${API_BASE_URL}/auth/login`,
 };
 
 // API Functions
@@ -65,6 +66,33 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error fetching artisans with pagination:', error);
+      throw error;
+    }
+  },
+
+  // Login user
+  async login(email, password) {
+    try {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error during login:', error);
       throw error;
     }
   }

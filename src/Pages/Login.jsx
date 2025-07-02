@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
@@ -26,22 +27,44 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Check test credentials
-    if (formData.email === 'test@gmail.com' && formData.password === 'admin') {
-      // Store login state (you can use localStorage or context)
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userEmail', formData.email);
-
-      // Navigate to dashboard
-      navigate('/dashboard');
-    } else {
-      setError('Invalid email or password. Please use test@gmail.com / admin');
+    try {
+      // Call the real API
+      const response = await apiService.login(formData.email, formData.password);
+      
+      // Store authentication data
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userEmail', formData.email);
+        
+        // Store user data if available
+        if (response.user) {
+          localStorage.setItem('userData', JSON.stringify(response.user));
+        }
+        
+        // Navigate to dashboard
+        navigate('/dashboard');
+      } else {
+        setError('Login successful but no token received. Please try again.');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      
+      // Show user-friendly error message
+      if (err.message && (
+        err.message.toLowerCase().includes('user not found') ||
+        err.message.toLowerCase().includes('invalid credentials') ||
+        err.message.toLowerCase().includes('unauthorized') ||
+        err.message.toLowerCase().includes('401') ||
+        err.message.toLowerCase().includes('404')
+      )) {
+        setError('User not found. Please check your email and password.');
+      } else {
+        setError('Login failed. Please check your credentials and try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
@@ -147,14 +170,12 @@ export default function LoginPage() {
                 </button>
               </form>
 
-              {/* Test Credentials Info */}
+              {/* API Info */}
               <div className='mt-6 p-4 bg-[#d4845b]/10 border border-[#d4845b]/20 rounded-xl'>
                 <p className='text-sm text-[#a1a1aa] text-center'>
-                  <strong className='text-[#d4845b]'>Test Credentials:</strong>
+                  <strong className='text-[#d4845b]'>Connected to:</strong>
                   <br />
-                  Email: test@gmail.com
-                  <br />
-                  Password: admin
+                  {apiService.API_ENDPOINTS?.LOGIN || 'https://citsa-hackathon-2.onrender.com/auth/login'}
                 </p>
               </div>
 
