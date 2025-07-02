@@ -33,11 +33,6 @@ function useCartCount() {
 
 export default function Navigation() {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check localStorage for saved preference, default to dark mode
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : true;
-  });
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const cartCount = useCartCount();
@@ -47,17 +42,6 @@ export default function Navigation() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const userEmail = localStorage.getItem('userEmail');
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-  useEffect(() => {
-    // Apply theme to document
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    // Save preference to localStorage
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
 
   // Close menu on outside click
   useEffect(() => {
@@ -323,9 +307,9 @@ export default function Navigation() {
           onClick={() => setMobileNavOpen(false)}
         >
           <nav
-            className='fixed left-0 top-0 z-50 w-64 h-full bg-white dark:bg-[#18181b] shadow-xl p-8 flex flex-col gap-6 transition-transform duration-300 md:hidden'
+            className='fixed left-0 top-0 z-50 w-screen h-screen bg-black shadow-xl flex flex-col items-center justify-center gap-8 p-4 transition-transform duration-300 md:hidden'
             style={{
-              transform: mobileNavOpen ? 'translateX(0)' : 'translateX(-100%)',
+              transform: mobileNavOpen ? 'translateY(0)' : 'translateY(-100%)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -355,8 +339,8 @@ export default function Navigation() {
                 className={({ isActive }) =>
                   `block w-full text-left px-4 py-3 rounded-lg font-semibold text-lg transition-colors ` +
                   (isActive
-                    ? 'text-[#d4845b] bg-[#f8e1da]/60 dark:bg-[#d4845b]/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20')
+                    ? 'text-[#d4845b] bg-[#232326]'
+                    : 'text-white hover:text-[#d4845b] hover:bg-[#232326]/70')
                 }
                 end={link === 'Home'}
                 onClick={() => setMobileNavOpen(false)}
