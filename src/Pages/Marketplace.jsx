@@ -474,7 +474,7 @@ export default function Marketplace() {
                 </div>
                 <button
                   className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
-                  onClick={() => navigate(`/entrepreneur/${seller.id}/dashboard`)}
+                  onClick={() => navigate(`/entrepreneur/${seller.id}`)}
                 >
                   View Shop
                 </button>
