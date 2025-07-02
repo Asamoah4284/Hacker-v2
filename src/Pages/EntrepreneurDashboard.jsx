@@ -69,7 +69,7 @@ export default function EntrepreneurDashboard() {
                   )}
                 </div>
                 <div>
-                  <h1 className='text-4xl font-bold text-white mb-1'>
+                  <h1 className='text-2xl font-bold text-white mb-1'>
                     {entrepreneur.name}
                   </h1>
                   <div className='text-[#a1a1aa] text-sm'>
@@ -92,7 +92,7 @@ export default function EntrepreneurDashboard() {
 
             {/* Bio */}
             <div className='mb-8'>
-              <h2 className='text-2xl font-semibold mb-2 text-white'>About</h2>
+              <h2 className='text-lg font-semibold mb-2 text-white'>About</h2>
               <p className='text-[#a1a1aa] text-base leading-relaxed bg-white/5 rounded-xl p-4'>
                 {entrepreneur.story}
               </p>
@@ -104,21 +104,21 @@ export default function EntrepreneurDashboard() {
                 <span className='text-[#a1a1aa] text-sm mb-1'>
                   People Sharing Link
                 </span>
-                <span className='text-3xl font-bold text-[#d4845b]'>-</span>
+                <div className='text-lg font-bold text-[#d4845b]'>-</div>
               </div>
               <div className='bg-white/10 rounded-2xl p-6 flex flex-col items-center'>
                 <span className='text-[#a1a1aa] text-sm mb-1'>
                   People Signed Up With Link
                 </span>
-                <span className='text-3xl font-bold text-[#d4845b]'>-</span>
+                <div className='text-lg font-bold text-[#d4845b]'>-</div>
               </div>
               <div className='bg-white/10 rounded-2xl p-6 flex flex-col items-center'>
                 <span className='text-[#a1a1aa] text-sm mb-1'>
                   Total Products
                 </span>
-                <span className='text-3xl font-bold text-[#d4845b]'>
+                <div className='text-lg font-bold text-[#d4845b]'>
                   {entrepreneur.products?.length || 0}
-                </span>
+                </div>
               </div>
             </div>
 
@@ -126,7 +126,7 @@ export default function EntrepreneurDashboard() {
             <div className='flex flex-col md:flex-row gap-8'>
               {/* Products */}
               <div className='flex-1'>
-                <h2 className='text-2xl font-semibold mb-4 text-white'>
+                <h2 className='text-lg font-semibold mb-4 text-white'>
                   Products
                 </h2>
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6'>
@@ -140,7 +140,7 @@ export default function EntrepreneurDashboard() {
                           {product.name}
                         </div>
                         <div className='text-[#d4845b] font-semibold text-base'>
-                          ${product.price}
+                          GH₵{product.price}
                         </div>
                         <div className='text-[#a1a1aa] text-sm'>
                           {product.description || 'No description.'}
@@ -164,7 +164,7 @@ export default function EntrepreneurDashboard() {
               {/* Top Patrons */}
               <div className='w-full md:w-80 flex-shrink-0'>
                 <div className='bg-white/10 rounded-2xl p-6 shadow flex flex-col gap-4 h-full'>
-                  <h2 className='text-xl font-semibold text-white mb-2'>
+                  <h2 className='text-base font-semibold text-white mb-2'>
                     Top Patrons
                   </h2>
                   {entrepreneur.topPatrons &&

@@ -197,7 +197,11 @@ export default function CartsPage() {
                           </div>
                         </td>
                         <td className='py-4 pr-6'>{item.seller}</td>
-                        <td className='py-4 pr-6'>${item.price.toFixed(2)}</td>
+                        <td className='py-4 pr-6'>
+                          <span className='font-bold text-lg text-white'>
+                            GH₵{item.price}
+                          </span>
+                        </td>
                         <td className='py-4 pr-6'>
                           <div className='flex items-center gap-2'>
                             <button
@@ -218,7 +222,9 @@ export default function CartsPage() {
                           </div>
                         </td>
                         <td className='py-4 pr-6 font-semibold'>
-                          ${(item.price * item.quantity).toFixed(2)}
+                          <span className='font-bold text-lg text-white'>
+                            GH₵{(item.price * item.quantity).toFixed(2)}
+                          </span>
                         </td>
                         <td className='py-4'>
                           <button
@@ -247,7 +253,9 @@ export default function CartsPage() {
             <div className='flex flex-col md:flex-row justify-between items-center mt-8 gap-6'>
               <div className='text-xl font-bold'>
                 Cart Total:{' '}
-                <span className='text-[#d4845b]'>${total.toFixed(2)}</span>
+                <span className='font-bold text-2xl text-[#d4845b]'>
+                  GH₵{total.toFixed(2)}
+                </span>
               </div>
               <button
                 onClick={handleCheckout}

@@ -1,24 +1,33 @@
+import { Link } from 'react-router-dom';
+import kolaLogo from '../assets/images/logo/kola-logo.png';
+
 export default function Footer() {
   return (
     <footer className='relative bg-gray-100 dark:bg-[#18181b] border-t border-gray-200/50 dark:border-gray-700/10 pt-16 pb-8 text-base backdrop-blur-lg shadow-2xl rounded-t-2xl animate-fade-in-up'>
       <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4845b] via-[#f8e1da] to-[#d4845b] opacity-40 rounded-t-2xl'></div>
-      <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
+      <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-4 gap-14 mb-10'>
         <div>
-          <div className='flex items-center gap-3 mb-4'>
-            <span className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-2xl font-bold shadow'>
-              K
-            </span>
-            <span className='font-bold text-2xl text-gray-800 dark:text-white'>
-              Kola
-            </span>
+          <div className='flex items-center mb-4'>
+            <div className='relative h-16 w-auto overflow-hidden'>
+              {/* Base logo with terracotta filter */}
+              <img
+                src={kolaLogo}
+                alt='Kola Logo'
+                className='h-16 w-auto object-contain relative z-10'
+                style={{
+                  filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
+                }}
+              />
+              {/* Gradient overlay for left-to-right transition */}
+              <div 
+                className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay pointer-events-none'
+              ></div>
+            </div>
           </div>
           <p className='text-lg text-gray-600 dark:text-[#a1a1aa] mb-4'>
-            Empowering African entrepreneurs worldwide through a marketplace
-            that celebrates creativity, authenticity, and community impact.
+            Empowering African entrepreneurs worldwide.
           </p>
           <div className='flex flex-col gap-1 text-gray-600 dark:text-[#a1a1aa] mb-4'>
-            <span>hello@kola.com</span>
-            <span>+1 (555) 123-4567</span>
             <span>Global Marketplace</span>
           </div>
           <div className='flex gap-3 mt-2'>
@@ -49,72 +58,43 @@ export default function Footer() {
           </div>
         </div>
         <div>
-          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>
-            Marketplace
-          </div>
+          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>Navigation</div>
           <ul className='space-y-2 text-gray-600 dark:text-[#a1a1aa]'>
-            <li>Browse Products</li>
-            <li>Categories</li>
-            <li>Featured</li>
-            <li>New Arrivals</li>
-            <li>Best Sellers</li>
+            <li><Link to='/'>Home</Link></li>
+            <li><Link to='/marketplace'>Marketplace</Link></li>
+            <li><Link to='/entrepreneur'>Entrepreneurs</Link></li>
+            <li><Link to='/about'>About</Link></li>
           </ul>
         </div>
         <div>
-          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>
-            Entrepreneurs
-          </div>
+          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>Contact Us</div>
           <ul className='space-y-2 text-gray-600 dark:text-[#a1a1aa]'>
-            <li>Become a Seller</li>
-            <li>Seller Dashboard</li>
-            <li>Success Stories</li>
-            <li>Resources</li>
-            <li>Community</li>
+            <li><a href='mailto:hello@kola.com' className='hover:text-[#d4845b] focus:text-[#d4845b] transition-colors outline-none'>hello@kola.com</a></li>
+            <li><a href='tel:+233556893894' className='hover:text-[#d4845b] focus:text-[#d4845b] transition-colors outline-none'>(+233) 556893894</a></li>
+            {/* <li><Link to='/help'>Help Center</Link></li>
+            <li><Link to='/contact'>Contact Form</Link></li> */}
           </ul>
         </div>
         <div>
-          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>
-            Support
-          </div>
+          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>Legal</div>
           <ul className='space-y-2 text-gray-600 dark:text-[#a1a1aa]'>
-            <li>Help Center</li>
-            <li>Contact Us</li>
-            <li>Shipping Info</li>
-            <li>Returns</li>
-            <li>Size Guide</li>
-          </ul>
-        </div>
-        <div>
-          <div className='font-semibold mb-3 text-gray-800 dark:text-white text-lg'>
-            Company
-          </div>
-          <ul className='space-y-2 text-gray-600 dark:text-[#a1a1aa]'>
-            <li>About Us</li>
-            <li>Our Mission</li>
-            <li>Careers</li>
-            <li>Press</li>
-            <li>Blog</li>
+            <li><a href='#'>Privacy Policy</a></li>
+            <li><a href='#'>Terms of Service</a></li>
           </ul>
         </div>
       </div>
       <div className='container mx-auto px-8 md:px-16 xl:px-32 flex flex-col md:flex-row justify-between items-center border-t border-gray-200/50 dark:border-white/10 pt-8 text-gray-600 dark:text-[#a1a1aa] mt-8'>
         <span className='text-sm md:text-base text-center md:text-left'>
-          © 2024 Kola. Made with <span className='text-[#d4845b]'>♥</span> for
+          © 2025 Kola. Made with <span className='text-[#d4845b]'>♥</span> for
           African entrepreneurs worldwide.
         </span>
         <div className='flex gap-6 mt-2 md:mt-0 text-sm'>
-          <a href='#' className='hover:text-[#d4845b] transition-colors'>
+          <Link to='/privacy' className='hover:text-[#d4845b] transition-colors'>
             Privacy Policy
-          </a>
-          <a href='#' className='hover:text-[#d4845b] transition-colors'>
+          </Link>
+          <Link to='/terms' className='hover:text-[#d4845b] transition-colors'>
             Terms of Service
-          </a>
-          <a href='#' className='hover:text-[#d4845b] transition-colors'>
-            Cookie Policy
-          </a>
-          <a href='#' className='hover:text-[#d4845b] transition-colors'>
-            Refund Policy
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

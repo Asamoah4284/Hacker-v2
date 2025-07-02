@@ -83,7 +83,7 @@ export default function OrdersPage() {
                       </td>
                       <td className='py-4 pr-6'>{order.items}</td>
                       <td className='py-4 pr-6 font-semibold'>
-                        ${order.total.toFixed(2)}
+                        GH₵{order.total.toFixed(2)}
                       </td>
                       <td className='py-4'>
                         <button className='px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200 shadow'>

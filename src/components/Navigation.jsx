@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import kolaLogo from '../assets/images/logo/kola-logo.png';
 
 function useCartCount() {
   const [cartCount, setCartCount] = useState(() => {
@@ -33,11 +34,6 @@ function useCartCount() {
 
 export default function Navigation() {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    // Check localStorage for saved preference, default to dark mode
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : true;
-  });
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const cartCount = useCartCount();
@@ -47,17 +43,6 @@ export default function Navigation() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   const userEmail = localStorage.getItem('userEmail');
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-
-  useEffect(() => {
-    // Apply theme to document
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-    // Save preference to localStorage
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
 
   // Close menu on outside click
   useEffect(() => {
@@ -86,7 +71,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className='sticky top-0 z-50 bg-gray-50/80 dark:bg-gray-900/10 backdrop-blur-lg shadow border-b border-gray-200/50 dark:border-gray-700/10 px-8 md:px-16 xl:px-32 py-3 flex items-center justify-between gap-8'>
+    <nav className='sticky top-0 z-50 bg-[#18181b] backdrop-blur-lg shadow border-b border-[#232326]/60 px-8 md:px-16 xl:px-32 py-3 flex items-center justify-between gap-8'>
       <div className='flex items-center gap-3'>
         {/* Hamburger for mobile (left of logo) */}
         <button
@@ -124,13 +109,22 @@ export default function Navigation() {
             </svg>
           )}
         </button>
-        <NavLink to='/' className='flex items-center gap-3 group'>
-          <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-xl font-bold shadow group-hover:scale-105 transition-transform'>
-            K
-          </span>
-          <span className='font-bold text-xl text-gray-800 dark:text-gray-100 group-hover:text-[#d4845b] transition-colors hidden md:inline'>
-            Kola
-          </span>
+        <NavLink to='/' className='flex items-center group'>
+          <div className='relative h-12 w-auto overflow-hidden'>
+            {/* Base logo with terracotta filter */}
+            <img
+              src={kolaLogo}
+              alt='Kola Logo'
+              className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
+              style={{
+                filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
+              }}
+            />
+            {/* Gradient overlay for left-to-right transition */}
+            <div 
+              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay group-hover:scale-105 transition-transform pointer-events-none'
+            ></div>
+          </div>
         </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
@@ -190,7 +184,7 @@ export default function Navigation() {
             {/* Cart Icon */}
             <Link
               to='/cart'
-              className='relative w-9 h-9 flex items-center justify-center rounded-full bg-gray-200/50 dark:bg-white/10 hover:bg-[#d4845b]/80 text-gray-600 dark:text-[#a1a1aa] hover:text-white transition-colors'
+              className='relative w-9 h-9 flex items-center justify-center rounded-full bg-[#232326] hover:bg-[#d4845b]/80 text-gray-300 hover:text-white transition-colors'
               aria-label='View cart'
             >
               <svg
@@ -215,9 +209,7 @@ export default function Navigation() {
               <button
                 onClick={() => setShowMenu((v) => !v)}
                 className={`w-11 h-11 flex items-center justify-center rounded-full border-2 ${
-                  showMenu
-                    ? 'border-[#d4845b]'
-                    : 'border-gray-200 dark:border-[#d4845b]'
+                  showMenu ? 'border-[#d4845b]' : 'border-[#232326]'
                 } bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:scale-105 active:scale-95 cursor-pointer`}
                 aria-label='User menu'
                 tabIndex={0}
@@ -242,7 +234,7 @@ export default function Navigation() {
                 )}
               </button>
               {showMenu && (
-                <div className='absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-4 px-6 z-50 animate-fade-in-up'>
+                <div className='absolute right-0 mt-2 w-56 bg-[#232326] border border-[#18181b] rounded-xl shadow-xl py-4 px-6 z-50 animate-fade-in-up'>
                   <div className='flex items-center gap-3 mb-4'>
                     <div className='w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-xl font-bold text-[#7a3419] shadow'>
                       {userData?.img ? (
@@ -263,27 +255,27 @@ export default function Navigation() {
                       )}
                     </div>
                     <div className='flex-1 min-w-0'>
-                      <div className='text-xs text-gray-400 dark:text-gray-500 mb-1'>
+                      <div className='text-xs text-gray-400 mb-1'>
                         Signed in as
                       </div>
-                      <div className='font-bold text-lg text-gray-800 dark:text-white truncate'>
+                      <div className='font-bold text-lg text-white truncate'>
                         {userData?.name || 'User'}
                       </div>
-                      <div className='text-sm text-gray-500 dark:text-gray-400 truncate'>
+                      <div className='text-sm text-gray-400 truncate'>
                         {userEmail}
                       </div>
                     </div>
                   </div>
                   <Link
                     to='/dashboard'
-                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-[#f8e1da] dark:hover:bg-[#d4845b]/20 transition-colors mb-2'
+                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-300 hover:bg-[#232326]/70 hover:text-[#d4845b] transition-colors mb-2'
                     onClick={() => setShowMenu(false)}
                   >
                     Dashboard
                   </Link>
                   <Link
                     to='/orders'
-                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-[#f8e1da] dark:hover:bg-[#d4845b]/20 transition-colors mb-2'
+                    className='block w-full text-left px-4 py-2 rounded-lg text-gray-300 hover:bg-[#232326]/70 hover:text-[#d4845b] transition-colors mb-2'
                     onClick={() => setShowMenu(false)}
                   >
                     Orders
@@ -303,7 +295,7 @@ export default function Navigation() {
           <div className='flex items-center gap-4'>
             <Link
               to='/login'
-              className='text-gray-600 dark:text-gray-400 font-medium px-4 py-2 rounded-lg transition-colors hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20 focus:text-[#d4845b] focus:bg-[#f8e1da]/30 dark:focus:bg-[#d4845b]/20'
+              className='text-gray-300 font-medium px-4 py-2 rounded-lg transition-colors hover:text-[#d4845b] hover:bg-[#232326]/70 focus:text-[#d4845b] focus:bg-[#232326]/70'
             >
               Login
             </Link>
@@ -319,18 +311,18 @@ export default function Navigation() {
       {/* Mobile Nav Drawer */}
       {mobileNavOpen && (
         <div
-          className='fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden'
+          className='fixed inset-0 z-40 bg-black/90 backdrop-blur-sm md:hidden'
           onClick={() => setMobileNavOpen(false)}
         >
           <nav
-            className='fixed left-0 top-0 z-50 w-64 h-full bg-white dark:bg-[#18181b] shadow-xl p-8 flex flex-col gap-6 transition-transform duration-300 md:hidden'
+            className='fixed left-0 top-0 z-50 w-screen h-screen bg-[#18181b] shadow-xl flex flex-col items-center justify-center gap-8 p-4 transition-transform duration-300 md:hidden'
             style={{
-              transform: mobileNavOpen ? 'translateX(0)' : 'translateX(-100%)',
+              transform: mobileNavOpen ? 'translateY(0)' : 'translateY(-100%)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className='self-end mb-6 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:bg-[#f8e1da]/40 dark:hover:bg-[#232326]/40 transition-colors'
+              className='self-end mb-6 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:bg-[#232326]/40 transition-colors'
               aria-label='Close menu'
               onClick={() => setMobileNavOpen(false)}
             >
@@ -355,8 +347,8 @@ export default function Navigation() {
                 className={({ isActive }) =>
                   `block w-full text-left px-4 py-3 rounded-lg font-semibold text-lg transition-colors ` +
                   (isActive
-                    ? 'text-[#d4845b] bg-[#f8e1da]/60 dark:bg-[#d4845b]/20'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20')
+                    ? 'text-[#d4845b] bg-[#232326]'
+                    : 'text-gray-300 hover:text-[#d4845b] hover:bg-[#232326]/70')
                 }
                 end={link === 'Home'}
                 onClick={() => setMobileNavOpen(false)}

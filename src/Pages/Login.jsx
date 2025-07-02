@@ -88,8 +88,27 @@ export default function LoginPage() {
         <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
         <div className='absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-[#f8e1da] opacity-15 rounded-full blur-3xl pointer-events-none'></div>
 
-        <div className='container mx-auto px-8 md:px-16 xl:px-32 flex justify-center items-center min-h-[calc(100vh-200px)] relative z-10'>
-          <div className='w-full max-w-md'>
+        <div className='container mx-auto px-8 md:px-16 xl:px-32 flex flex-col md:flex-row items-center min-h-[calc(100vh-200px)] relative z-10 gap-12'>
+          {/* Left: Image and Welcome Content */}
+          <div className='hidden md:flex flex-1 flex-col items-center justify-center text-center'>
+            <img
+              src='https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80'
+              alt='African entrepreneur smiling'
+              className='w-full max-w-xs rounded-2xl shadow-xl mb-8 object-cover'
+            />
+            <h2 className='text-xl font-extrabold text-white mb-4'>
+              Welcome to Kola
+            </h2>
+            <p className='text-base text-[#a1a1aa] mb-2'>
+              Empowering Africa's most innovative entrepreneurs.
+            </p>
+            <p className='text-sm text-[#f8e1da]'>
+              Sign in to discover, shop, and support authentic African products
+              and stories.
+            </p>
+          </div>
+          {/* Right: Login Form */}
+          <div className='w-full max-w-md mx-auto'>
             {/* Login Form Card */}
             <motion.div
               className='bg-white/80 dark:bg-gray-800/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/10 p-8 md:p-10'
@@ -99,7 +118,7 @@ export default function LoginPage() {
             >
               {/* Header */}
               <div className='text-center mb-8'>
-                <h1 className='text-3xl font-bold text-white mb-2'>
+                <h1 className='text-xl font-bold text-white mb-2'>
                   Welcome Back
                 </h1>
                 <p className='text-[#a1a1aa]'>Sign in to your Kola account</p>

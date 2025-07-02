@@ -22,6 +22,8 @@ import Footer from '../components/Footer';
 import hero1 from '../assets/images/hero/hero-1.webp';
 import hero2 from '../assets/images/hero/hero-2.webp';
 import hero3 from '../assets/images/hero/hero-3.webp';
+import hero4 from '../assets/images/hero/hero-4.webp';
+import hero5 from '../assets/images/hero/hero-5.webp';
 
 // Local UI components
 function Button({ children, className = '', variant, size, ...props }) {
@@ -101,6 +103,20 @@ const heroImages = [
     name: 'Zara Fashion House',
     location: 'Cape Town, South Africa',
   },
+  {
+    id: 4,
+    src: hero4,
+    alt: 'Nigerian artisan crafting traditional beaded jewelry',
+    name: 'Adunni Beads',
+    location: 'Lagos, Nigeria',
+  },
+  {
+    id: 5,
+    src: hero5,
+    alt: 'Kenyan artisan weaving traditional kiondo baskets',
+    name: 'Maua Baskets',
+    location: 'Nairobi, Kenya',
+  },
 ];
 
 const stats = [
@@ -139,39 +155,6 @@ const stats = [
     ),
     value: '4.9',
     label: 'Average Rating',
-  },
-];
-
-const entrepreneurs = [
-  {
-    name: 'Amara Okafor',
-    tag: 'Fashion & Apparel',
-    company: "Amara's Textiles",
-    location: 'Lagos, Nigeria',
-    desc: 'Creating beautiful traditional fabrics with modern designs',
-    rating: 4.9,
-    products: 45,
-    sales: 1200,
-  },
-  {
-    name: 'Kwame Asante',
-    tag: 'Arts & Crafts',
-    company: 'Asante Crafts',
-    location: 'Accra, Ghana',
-    desc: 'Handcrafted wooden sculptures and home decor',
-    rating: 4.8,
-    products: 32,
-    sales: 890,
-  },
-  {
-    name: 'Fatima Al-Rashid',
-    tag: 'Beauty & Wellness',
-    company: 'Desert Rose Beauty',
-    location: 'Marrakech, Morocco',
-    desc: 'Natural beauty products inspired by Moroccan traditions',
-    rating: 4.9,
-    products: 28,
-    sales: 1500,
   },
 ];
 
@@ -219,6 +202,9 @@ export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [entrepreneurs, setEntrepreneurs] = useState([]);
+  const [entrepreneursLoading, setEntrepreneursLoading] = useState(true);
+  const [entrepreneursError, setEntrepreneursError] = useState(null);
 
   // Fetch featured products from API
   useEffect(() => {
@@ -246,11 +232,8 @@ export default function HomePage() {
           id: product.id,
         }));
         setFeaturedProducts(featured);
-        setError(null);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch featured products');
-        console.error('Error fetching featured products:', err);
-        // Fallback to empty array
         setFeaturedProducts([]);
       } finally {
         setLoading(false);
@@ -267,6 +250,23 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch 3 entrepreneurs (artisans) from API
+  useEffect(() => {
+    const fetchEntrepreneurs = async () => {
+      try {
+        setEntrepreneursLoading(true);
+        setEntrepreneursError(null);
+        const data = await apiService.getArtisans();
+        setEntrepreneurs((data.artisans || []).slice(0, 3));
+      } catch (err) {
+        setEntrepreneursError('Failed to fetch entrepreneurs');
+      } finally {
+        setEntrepreneursLoading(false);
+      }
+    };
+    fetchEntrepreneurs();
+  }, []);
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
       <Navigation />
@@ -279,12 +279,7 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        {/* Animated Gradient Overlay */}
-        <div className='absolute inset-0 pointer-events-none z-0'>
-          <div className='absolute left-[-20%] top-[-20%] w-[600px] h-[600px] bg-gradient-to-br from-[#d4845b]/40 via-[#f8e1da]/30 to-transparent rounded-full blur-3xl animate-pulse-slow'></div>
-          <div className='absolute right-[-10%] bottom-[-10%] w-[400px] h-[400px] bg-gradient-to-tr from-[#d4845b]/30 via-[#f8e1da]/20 to-transparent rounded-full blur-2xl animate-pulse-slower'></div>
-        </div>
-        <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center relative z-10'>
           {/* Left Column */}
           <div className='space-y-12 animate-fade-in-up'>
             <div className='space-y-8'>
@@ -294,14 +289,14 @@ export default function HomePage() {
                 </span>
                 ENTREPRENEUR MARKETPLACE
               </span>
-              <h1 className='font-heading text-7xl md:text-8xl font-extrabold text-white leading-tight tracking-tight drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
+              <h1 className='font-heading text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
                 Amplify Your{' '}
                 <span className='relative text-transparent bg-clip-text bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b]'>
                   Hustle.
                   <span className='absolute left-0 -bottom-2 w-full h-4 bg-gradient-to-r from-[#f8e1da] via-[#d4845b]/30 to-transparent rounded-full -z-10 opacity-80 animate-underline'></span>
                 </span>
               </h1>
-              <p className='text-2xl text-[#a1a1aa] max-w-2xl leading-relaxed'>
+              <p className='text-lg text-[#a1a1aa] max-w-2xl leading-relaxed'>
                 Kola connects Africa's most innovative entrepreneurs with the
                 world. Turn your customers into your marketing team.
               </p>
@@ -373,7 +368,7 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-12 text-center'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-12 text-center'>
           {stats.map((stat, i) => (
             <div key={i} className='flex flex-col items-center'>
               {stat.icon}
@@ -394,11 +389,11 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4'>
-          <h2 className='text-5xl font-bold text-white mb-4 text-center'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8'>
+          <h2 className='text-3xl font-bold text-white mb-4 text-center'>
             Featured Products
           </h2>
-          <p className='text-xl text-[#a1a1aa] text-center mb-12'>
+          <p className='text-base text-[#a1a1aa] text-center mb-12'>
             Discover handpicked products from our most talented entrepreneurs
           </p>
           {loading ? (
@@ -472,11 +467,11 @@ export default function HomePage() {
                     </div>
                     <div className='flex items-end gap-2 mb-4'>
                       <span className='text-2xl font-bold text-white'>
-                        ${product.price}
+                        GH₵{product.price}
                       </span>
                       {product.oldPrice && (
                         <span className='text-base line-through text-[#a1a1aa]'>
-                          ${product.oldPrice}
+                          GH₵{product.oldPrice}
                         </span>
                       )}
                     </div>
@@ -511,72 +506,81 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4'>
-          <h2 className='text-5xl font-bold text-white mb-4 text-center'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8'>
+          <h2 className='text-3xl font-bold text-white mb-4 text-center'>
             Meet Our Entrepreneurs
           </h2>
-          <p className='text-xl text-[#a1a1aa] text-center mb-12'>
+          <p className='text-base text-[#a1a1aa] text-center mb-12'>
             Get to know the talented creators behind these amazing products
           </p>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-12'>
-            {entrepreneurs.map((e, i) => (
-              <div
-                key={i}
-                className='relative flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-10 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
-                style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
-              >
-                {/* Avatar Circle */}
-                <div className='w-20 h-20 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-3xl font-bold text-[#7a3419] shadow mb-4'>
-                  {e.name
-                    .split(' ')
-                    .map((n) => n[0])
-                    .join('')}
-                </div>
-                {/* Gradient Badge */}
-                <span className='mb-2 px-4 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
-                  {e.tag}
-                </span>
-                {/* Name and Company */}
-                <h3 className='text-2xl font-extrabold mb-1 text-white text-center'>
-                  {e.name}
-                </h3>
-                <p className='text-base text-[#d4845b] mb-1 text-center'>
-                  {e.company}
-                </p>
-                <p className='text-sm text-[#a1a1aa] mb-2 text-center'>
-                  {e.location}
-                </p>
-                {/* Description */}
-                <p className='text-base mb-5 text-[#fdf3f0] text-center'>
-                  {e.desc}
-                </p>
-                {/* Divider */}
-                <div className='w-full h-px bg-white/10 my-4'></div>
-                {/* Stats Grid */}
-                <div className='grid grid-cols-3 gap-2 w-full text-center mb-5'>
-                  <div className='flex flex-col items-center'>
-                    <Star className='h-5 w-5 text-yellow-400 mb-1' />
-                    <span className='font-bold text-white'>{e.rating}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Rating</span>
-                  </div>
-                  <div className='flex flex-col items-center'>
-                    <ShoppingBag className='h-5 w-5 text-[#d4845b] mb-1' />
-                    <span className='font-bold text-white'>{e.products}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Products</span>
-                  </div>
-                  <div className='flex flex-col items-center'>
-                    <Users className='h-5 w-5 text-[#d4845b] mb-1' />
-                    <span className='font-bold text-white'>{e.sales}</span>
-                    <span className='text-xs text-[#a1a1aa]'>Sales</span>
-                  </div>
-                </div>
-                <Button className='mt-auto w-full' size='sm' as='div'>
-                  <Link to='/entrepreneur' className='block w-full h-full'>
-                    View Profile
-                  </Link>
-                </Button>
+            {entrepreneursLoading ? (
+              <div className='col-span-3 text-center text-[#a1a1aa] py-12'>
+                Loading entrepreneurs...
               </div>
-            ))}
+            ) : entrepreneursError ? (
+              <div className='col-span-3 text-center text-red-400 py-12'>
+                {entrepreneursError}
+              </div>
+            ) : (
+              entrepreneurs.map((e, i) => (
+                <div
+                  key={e.id}
+                  className='relative flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-10 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
+                  style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
+                >
+                  {/* Avatar Circle */}
+                  <div className='w-20 h-20 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-3xl font-bold text-[#7a3419] shadow mb-4'>
+                    {e.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
+                  </div>
+                  {/* Gradient Badge */}
+                  <span className='mb-2 px-4 py-1 rounded-full text-sm font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
+                    {e.specialty}
+                  </span>
+                  {/* Name and Company */}
+                  <h3 className='text-2xl font-extrabold mb-1 text-white text-center'>
+                    {e.name}
+                  </h3>
+                  <p className='text-base text-[#d4845b] mb-1 text-center'>
+                    {e.location}
+                  </p>
+                  {/* Description */}
+                  <p className='text-base mb-5 text-[#fdf3f0] text-center'>
+                    {e.story}
+                  </p>
+                  {/* Divider */}
+                  <div className='w-full h-px bg-white/10 my-4'></div>
+                  {/* Stats Grid */}
+                  <div className='grid grid-cols-2 gap-2 w-full text-center mb-5'>
+                    <div className='flex flex-col items-center'>
+                      <ShoppingBag className='h-5 w-5 text-[#d4845b] mb-1' />
+                      <span className='font-bold text-white'>
+                        {e.productCount || (e.products ? e.products.length : 0)}
+                      </span>
+                      <span className='text-xs text-[#a1a1aa]'>Products</span>
+                    </div>
+                    <div className='flex flex-col items-center'>
+                      <Users className='h-5 w-5 text-[#d4845b] mb-1' />
+                      <span className='font-bold text-white'>
+                        {e.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                      <span className='text-xs text-[#a1a1aa]'>Status</span>
+                    </div>
+                  </div>
+                  <Button className='mt-auto w-full' size='sm' as='div'>
+                    <Link
+                      to={`/entrepreneur/${e.id}`}
+                      className='block w-full h-full'
+                    >
+                      View Profile
+                    </Link>
+                  </Button>
+                </div>
+              ))
+            )}
           </div>
           <div className='flex justify-center mt-12'>
             <Link to='/entrepreneur'>
@@ -593,32 +597,52 @@ export default function HomePage() {
 
       {/* Why Choose Our Platform */}
       <motion.section
-        className='py-20'
+        className='py-20 bg-gradient-to-br from-[#232326]/80 via-[#18181b]/90 to-[#232326]/80 relative overflow-hidden'
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4'>
-          <h2 className='text-5xl font-bold text-white mb-4 text-center'>
-            Why Choose Our Platform?
-          </h2>
-          <p className='text-xl text-[#a1a1aa] text-center mb-12'>
-            We're committed to creating meaningful connections between
-            entrepreneurs and customers
-          </p>
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'>
+        {/* Glassmorphism Card Overlay */}
+        <div className='absolute inset-0 pointer-events-none z-0'>
+          <div className='absolute left-1/2 top-0 -translate-x-1/2 w-[80vw] h-[60vh] bg-white/5 rounded-3xl blur-2xl'></div>
+        </div>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 relative z-10'>
+          <div className='flex flex-col items-center mb-8'>
+            <span className='inline-block mb-4 px-5 py-2 rounded-full font-bold text-sm bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow border border-[#f1c3b5]/60'>
+              Why Choose Us
+            </span>
+            <h2 className='text-3xl font-bold text-white mb-2 text-center'>
+              Why Choose Our Platform?
+            </h2>
+            <p className='text-base text-[#a1a1aa] text-center max-w-2xl'>
+              We go beyond just selling products. Kola is a movement—empowering
+              entrepreneurs, ensuring quality, and connecting you to authentic
+              African stories.
+            </p>
+          </div>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
             {platformFeatures.map((f, i) => (
-              <div
+              <motion.div
                 key={i}
-                className='flex flex-col items-center text-center bg-[#232326]/80 rounded-2xl p-10 h-full shadow-xl backdrop-blur-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-200'
+                className='flex flex-col items-center text-center bg-white/10 backdrop-blur-lg rounded-2xl p-8 h-full shadow-xl border border-white/10 hover:shadow-2xl hover:-translate-y-1 hover:scale-105 transition-all duration-300 group'
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.5,
+                  delay: i * 0.08 + 0.1,
+                  ease: 'easeOut',
+                }}
               >
-                {f.icon}
-                <h4 className='font-semibold text-2xl mb-2 text-white'>
+                <div className='mb-4 flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] shadow group-hover:scale-110 transition-transform'>
+                  {f.icon}
+                </div>
+                <h4 className='font-semibold text-lg mb-2 text-white'>
                   {f.title}
                 </h4>
-                <p className='text-lg text-[#fdf3f0]'>{f.desc}</p>
-              </div>
+                <p className='text-sm text-[#fdf3f0]'>{f.desc}</p>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -632,11 +656,11 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4 text-center'>
-          <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 text-center'>
+          <h2 className='text-2xl font-bold text-white mb-6'>
             Ready to Make a Difference?
           </h2>
-          <p className='text-xl text-[#a1a1aa] mb-12'>
+          <p className='text-base text-[#a1a1aa] mb-12'>
             Join thousands of customers who are already supporting African
             entrepreneurs and discovering unique products that tell a story.
           </p>
@@ -666,7 +690,7 @@ export default function HomePage() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-4 flex justify-center'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 flex justify-center'>
           <div className='bg-[#232326]/80 backdrop-blur-lg rounded-2xl p-12 w-full max-w-xl shadow-xl'>
             <h3 className='text-2xl font-semibold mb-4 text-white text-center'>
               Stay Updated with Kola
