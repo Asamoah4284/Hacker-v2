@@ -71,18 +71,19 @@ export default function CartsPage() {
   const userData = JSON.parse(localStorage.getItem('userData'));
   const paystackConfig = {
     reference: new Date().getTime().toString(),
-    email: userData?.email || localStorage.getItem('userEmail') || 'customer@example.com',
-    amount: total * 15 * 100, // 1 USD = 15 GHS, Paystack expects amount in pesewas
+    email:
+      userData?.email ||
+      localStorage.getItem('userEmail') ||
+      'customer@example.com',
+    amount: total * 100, // 1 USD = 15 GHS, Paystack expects amount in pesewas
     currency: 'GHS',
     publicKey: 'pk_test_c827720756c17a27051917f50a45e18e1cb423ae',
   };
 
   const initializePayment = usePaystackPayment(paystackConfig);
 
-  const onPaystackSuccess = (reference) => {
+  const onPaystackSuccess = () => {
     setCheckoutMessage('Payment successful! Your order has been placed.');
-    setCart([]);
-    localStorage.removeItem('cart');
     setTimeout(() => {
       navigate('/orders');
     }, 2000);
@@ -101,14 +102,18 @@ export default function CartsPage() {
     let userId = userData?.id;
     if (!userId) {
       try {
-        const user = JSON.parse(localStorage.getItem('user')) || JSON.parse(localStorage.getItem('currentUser'));
+        const user =
+          JSON.parse(localStorage.getItem('user')) ||
+          JSON.parse(localStorage.getItem('currentUser'));
         userId = user?.id || user?._id || user?.userId;
       } catch {}
     }
 
     // Check if we have a valid userId
     if (!userId) {
-      setCheckoutMessage('User not logged in. Please log in to complete your order.');
+      setCheckoutMessage(
+        'User not logged in. Please log in to complete your order.'
+      );
       setIsProcessing(false);
       return;
     }
@@ -118,24 +123,30 @@ export default function CartsPage() {
       items: cart,
       total: total,
       reference: `manual_checkout_${Date.now()}`,
-      status: 'pending'
+      status: 'pending',
     };
 
     console.log('Sending order data:', orderData);
 
     try {
-      const response = await fetch('https://citsa-hackathon-2.onrender.com/app/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
+      const response = await fetch(
+        'https://citsa-hackathon-2.onrender.com/app/orders',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
 
       console.log('Response status:', response.status);
 
       if (response.ok) {
-        // Order created, now show Paystack modal
+        // Order created, clear cart immediately
+        setCart([]);
+        localStorage.removeItem('cart');
+        // Now show Paystack modal
         initializePayment(onPaystackSuccess, onPaystackClose);
       } else {
         const errorData = await response.text();
@@ -144,7 +155,9 @@ export default function CartsPage() {
       }
     } catch (error) {
       console.error('Network error:', error);
-      setCheckoutMessage('Network error. Please check your connection and try again.');
+      setCheckoutMessage(
+        'Network error. Please check your connection and try again.'
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -241,15 +254,17 @@ export default function CartsPage() {
               </div>
             )}
             {checkoutMessage && (
-              <div className={`mt-6 p-4 rounded-lg text-center font-semibold ${
-                checkoutMessage.includes('successful') 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200' 
-                  : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
-              }`}>
+              <div
+                className={`mt-6 p-4 rounded-lg text-center font-semibold ${
+                  checkoutMessage.includes('successful')
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+                    : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+                }`}
+              >
                 {checkoutMessage}
               </div>
             )}
-            
+
             <div className='flex flex-col md:flex-row justify-between items-center mt-8 gap-6'>
               <div className='text-xl font-bold'>
                 Cart Total:{' '}

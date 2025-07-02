@@ -31,6 +31,7 @@ export default function OrdersPage() {
       try {
         const data = await apiService.getOrders();
         setOrders(Array.isArray(data) ? data : data.orders || []);
+        
       } catch {
         setError('Failed to load orders.');
       } finally {
