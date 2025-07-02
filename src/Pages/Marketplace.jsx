@@ -201,7 +201,14 @@ export default function Marketplace() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className='px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#d4845b] transition-colors'
+                className='px-4 py-2 bg-[#232326] dark:bg-[#18181b] border border-[#d4845b]/40 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#d4845b] focus:border-[#d4845b] transition-colors appearance-none'
+                style={{
+                  backgroundImage:
+                    "url('data:image/svg+xml;utf8,<svg fill='white' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'><path d='M10 12a1 1 0 0 1-.7-.3l-4-4a1 1 0 1 1 1.4-1.4L10 9.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-.7.3z'/></svg>')",
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center',
+                  backgroundSize: '1.25em 1.25em',
+                }}
               >
                 <option value='featured'>Featured</option>
                 <option value='price-low'>Price: Low to High</option>

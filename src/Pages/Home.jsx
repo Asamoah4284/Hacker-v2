@@ -221,9 +221,13 @@ export default function HomePage() {
         const data = await apiService.getProducts();
         // Take first 4 products as featured
         const products = data.products || [];
-        const featured = products.slice(0, 4).map(product => ({
-          badge: product.stockQuantity < 10 ? 'Limited' : 
-                 product.stockQuantity < 20 ? 'Popular' : 'Featured',
+        const featured = products.slice(0, 4).map((product) => ({
+          badge:
+            product.stockQuantity < 10
+              ? 'Limited'
+              : product.stockQuantity < 20
+              ? 'Popular'
+              : 'Featured',
           name: product.name,
           seller: product.artisan?.name || 'Unknown Artisan',
           rating: 4.5 + Math.random() * 0.5, // Generate random rating between 4.5-5.0
@@ -232,7 +236,7 @@ export default function HomePage() {
           oldPrice: product.price * 1.2, // Add 20% markup for display
           btn: 'View',
           imageUrl: product.imageUrl,
-          id: product.id
+          id: product.id,
         }));
         setFeaturedProducts(featured);
         setError(null);
@@ -290,19 +294,23 @@ export default function HomePage() {
               </p>
             </div>
             <div className='flex flex-col sm:flex-row gap-4'>
-              <Button
-                size='lg'
-                className='shadow-lg hover:scale-105 transition-transform'
-              >
-                Explore Marketplace <ArrowRight className='ml-2 h-5 w-5' />
-              </Button>
-              <Button
-                variant='outline'
-                size='lg'
-                className='hover:bg-[#f8e1da] hover:text-[#7a3419] border-2 border-[#f1c3b5] shadow hover:scale-105 transition-transform'
-              >
-                Meet Entrepreneurs
-              </Button>
+              <Link to='/marketplace' className='w-full sm:w-auto'>
+                <Button
+                  size='lg'
+                  className='shadow-lg hover:scale-105 transition-transform w-full sm:w-auto'
+                >
+                  Explore Marketplace <ArrowRight className='ml-2 h-5 w-5' />
+                </Button>
+              </Link>
+              <Link to='/entrepreneur' className='w-full sm:w-auto'>
+                <Button
+                  variant='outline'
+                  size='lg'
+                  className='hover:bg-[#f8e1da] hover:text-[#7a3419] border-2 border-[#f1c3b5] shadow hover:scale-105 transition-transform w-full sm:w-auto'
+                >
+                  Meet Entrepreneurs
+                </Button>
+              </Link>
             </div>
           </div>
           {/* Right Column */}
@@ -371,13 +379,15 @@ export default function HomePage() {
           {loading ? (
             <div className='text-center py-20'>
               <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4845b]'></div>
-              <p className='text-[#a1a1aa] mt-4'>Loading featured products...</p>
+              <p className='text-[#a1a1aa] mt-4'>
+                Loading featured products...
+              </p>
             </div>
           ) : error ? (
             <div className='text-center py-20'>
               <p className='text-red-400 mb-4'>{error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
+              <button
+                onClick={() => window.location.reload()}
                 className='px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
               >
                 Try Again
@@ -445,8 +455,10 @@ export default function HomePage() {
                         </span>
                       )}
                     </div>
-                    <Button className='mt-auto w-full' size='sm'>
-                      {product.btn}
+                    <Button className='mt-auto w-full' size='sm' as='div'>
+                      <Link to={'/marketplace'} className='block w-full h-full'>
+                        {product.btn}
+                      </Link>
                     </Button>
                   </div>
                 </div>
@@ -454,12 +466,14 @@ export default function HomePage() {
             </div>
           )}
           <div className='flex justify-center mt-12'>
-            <Button
-              variant='outline'
-              className='rounded-full px-8 py-3 text-lg'
-            >
-              View All Products
-            </Button>
+            <Link to='/marketplace'>
+              <Button
+                variant='outline'
+                className='rounded-full px-8 py-3 text-lg'
+              >
+                View All Products
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -525,19 +539,23 @@ export default function HomePage() {
                     <span className='text-xs text-[#a1a1aa]'>Sales</span>
                   </div>
                 </div>
-                <Button className='mt-auto w-full' size='sm'>
-                  View Profile
+                <Button className='mt-auto w-full' size='sm' as='div'>
+                  <Link to='/entrepreneur' className='block w-full h-full'>
+                    View Profile
+                  </Link>
                 </Button>
               </div>
             ))}
           </div>
           <div className='flex justify-center mt-12'>
-            <Button
-              variant='outline'
-              className='rounded-full px-8 py-3 text-lg'
-            >
-              Meet All Entrepreneurs
-            </Button>
+            <Link to='/entrepreneur'>
+              <Button
+                variant='outline'
+                className='rounded-full px-8 py-3 text-lg'
+              >
+                Meet All Entrepreneurs
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -580,15 +598,19 @@ export default function HomePage() {
             entrepreneurs and discovering unique products that tell a story.
           </p>
           <div className='flex flex-col sm:flex-row gap-6 justify-center'>
-            <Button className='px-8 py-3 text-lg rounded-full shadow-lg'>
-              Start Shopping
-            </Button>
-            <Button
-              variant='outline'
-              className='px-8 py-3 text-lg border-[#f1c3b5] hover:bg-[#f8e1da] hover:text-[#7a3419] rounded-full shadow'
-            >
-              Meet Entrepreneurs
-            </Button>
+            <Link to='/marketplace' className='w-full sm:w-auto'>
+              <Button className='px-8 py-3 text-lg rounded-full shadow-lg w-full sm:w-auto'>
+                Start Shopping
+              </Button>
+            </Link>
+            <Link to='/entrepreneur' className='w-full sm:w-auto'>
+              <Button
+                variant='outline'
+                className='px-8 py-3 text-lg border-[#f1c3b5] hover:bg-[#f8e1da] hover:text-[#7a3419] rounded-full shadow w-full sm:w-auto'
+              >
+                Meet Entrepreneurs
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

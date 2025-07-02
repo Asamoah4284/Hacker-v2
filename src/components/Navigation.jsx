@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 function useCartCount() {
   const [cartCount, setCartCount] = useState(() => {
@@ -91,22 +91,30 @@ export default function Navigation() {
   return (
     <nav className='sticky top-0 z-50 bg-gray-50/80 dark:bg-gray-900/10 backdrop-blur-lg shadow border-b border-gray-200/50 dark:border-gray-700/10 px-8 md:px-16 xl:px-32 py-3 flex items-center justify-between gap-8'>
       <div className='flex items-center gap-3'>
-        <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-xl font-bold shadow'>
-          K
-        </span>
-        <span className='font-bold text-xl text-gray-800 dark:text-gray-100'>
-          Kola
-        </span>
+        <NavLink to='/' className='flex items-center gap-3 group'>
+          <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-xl font-bold shadow group-hover:scale-105 transition-transform'>
+            K
+          </span>
+          <span className='font-bold text-xl text-gray-800 dark:text-gray-100 group-hover:text-[#d4845b] transition-colors'>
+            Kola
+          </span>
+        </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
         {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
-          <Link
+          <NavLink
             key={link}
             to={link === 'Home' ? '/' : '/' + link.toLowerCase()}
-            className='text-gray-600 dark:text-gray-400 font-medium px-2 py-1 rounded transition-colors hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20 focus:text-[#d4845b] focus:bg-[#f8e1da]/30 dark:focus:bg-[#d4845b]/20'
+            className={({ isActive }) =>
+              `font-medium px-2 py-1 rounded transition-colors focus:text-[#d4845b] focus:bg-[#f8e1da]/30 dark:focus:bg-[#d4845b]/20 ` +
+              (isActive
+                ? 'text-[#d4845b] bg-[#f8e1da]/50 dark:bg-[#d4845b]/20'
+                : 'text-gray-600 dark:text-gray-400 hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20')
+            }
+            end={link === 'Home'}
           >
             {link}
-          </Link>
+          </NavLink>
         ))}
       </div>
       <div className='flex items-center gap-4'>
