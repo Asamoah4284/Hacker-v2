@@ -135,11 +135,31 @@ export default function SignupPage() {
             {/* Logo */}
             <div className='text-center mb-8'>
               <div className='flex items-center justify-center mb-4'>
-                <img
-                  src={kolaLogo}
-                  alt='Kola Logo'
-                  className='h-16 w-auto object-contain'
-                />
+                <div className='relative h-16 w-auto'>
+                  {/* Original logo with enhanced vibrancy */}
+                  <img
+                    src={kolaLogo}
+                    alt='Kola Logo'
+                    className='h-16 w-auto object-contain relative z-10'
+                    style={{
+                      filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
+                    }}
+                  />
+                  {/* Gradient overlay */}
+                  <div 
+                    className='absolute inset-0 h-16 w-auto bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b] rounded-lg opacity-60 mix-blend-color'
+                    style={{
+                      maskImage: `url(${kolaLogo})`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'center',
+                      WebkitMaskImage: `url(${kolaLogo})`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'center'
+                    }}
+                  ></div>
+                </div>
               </div>
               <h1 className='text-2xl font-bold text-white mb-2'>
                 Join Our Community

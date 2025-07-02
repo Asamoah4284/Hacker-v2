@@ -614,11 +614,31 @@ export default function Dashboard() {
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
             <div className='flex items-center mb-4'>
-              <img
-                src={kolaLogo}
-                alt='Kola Logo'
-                className='h-16 w-auto object-contain'
-              />
+              <div className='relative h-16 w-auto'>
+                {/* Original logo with enhanced vibrancy */}
+                <img
+                  src={kolaLogo}
+                  alt='Kola Logo'
+                  className='h-16 w-auto object-contain relative z-10'
+                  style={{
+                    filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
+                  }}
+                />
+                {/* Gradient overlay */}
+                <div 
+                  className='absolute inset-0 h-16 w-auto bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b] rounded-lg opacity-60 mix-blend-color'
+                  style={{
+                    maskImage: `url(${kolaLogo})`,
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                    WebkitMaskImage: `url(${kolaLogo})`,
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center'
+                  }}
+                ></div>
+              </div>
             </div>
             <p className='text-lg text-[#a1a1aa] mb-4'>
               Empowering African entrepreneurs worldwide through a marketplace
