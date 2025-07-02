@@ -1,23 +1,25 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
 export default function SignupPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
+    userType: 'customer',
     password: '',
     confirmPassword: '',
-    businessName: '',
-    businessType: '',
-    agreeToTerms: false,
+    agreeToTerms: false
   });
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -25,20 +27,72 @@ export default function SignupPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleNext = () => {
-    if (step === 1 && formData.firstName && formData.lastName && formData.email) {
+    if (step === 1 && formData.name && formData.email) {
       setStep(2);
-    } else if (step === 2 && formData.password && formData.confirmPassword && formData.password === formData.confirmPassword) {
-      setStep(3);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup data:', formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (!formData.agreeToTerms) {
+      setError('Please agree to the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const userData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        userType: formData.userType
+      };
+
+      const response = await apiService.register(userData);
+      
+      // Store user data and token if provided
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+
+      // Redirect to login page or dashboard
+      navigate('/login', { 
+        state: { 
+          message: 'Account created successfully! Please log in to continue.' 
+        } 
+      });
+      
+    } catch (err) {
+      console.error('Registration error:', err);
+      
+      // Handle specific error cases
+      if (err.message.includes('email') || err.message.includes('Email')) {
+        setError('An account with this email already exists. Please try logging in instead.');
+      } else if (err.message.includes('password') || err.message.includes('Password')) {
+        setError('Password must be at least 6 characters long.');
+      } else {
+        setError(err.message || 'Failed to create account. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,7 +121,7 @@ export default function SignupPage() {
 
             {/* Progress Steps */}
             <div className='flex items-center justify-center mb-8'>
-              {[1, 2, 3].map((stepNumber) => (
+              {[1, 2].map((stepNumber) => (
                 <div key={stepNumber} className='flex items-center'>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                     step >= stepNumber 
@@ -76,7 +130,7 @@ export default function SignupPage() {
                   }`}>
                     {stepNumber}
                   </div>
-                  {stepNumber < 3 && (
+                  {stepNumber < 2 && (
                     <div className={`w-12 h-0.5 mx-2 ${
                       step > stepNumber ? 'bg-gradient-to-r from-[#d4845b] to-[#f1c3b5]' : 'bg-white/10'
                     }`}></div>
@@ -85,41 +139,33 @@ export default function SignupPage() {
               ))}
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className='mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 text-sm'>
+                {error}
+              </div>
+            )}
+
             {/* Form */}
             <div className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8'>
           <form onSubmit={handleSubmit} className='space-y-6'>
             {/* Step 1: Personal Information */}
             {step === 1 && (
               <div className='space-y-4'>
-                <div className='grid grid-cols-2 gap-4'>
-                  <div>
-                    <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
-                      First Name
-                    </label>
-                    <input
-                      type='text'
-                      name='firstName'
-                      value={formData.firstName}
-                      onChange={handleInputChange}
-                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
-                      placeholder='Enter your first name'
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
-                      Last Name
-                    </label>
-                    <input
-                      type='text'
-                      name='lastName'
-                      value={formData.lastName}
-                      onChange={handleInputChange}
-                      className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
-                      placeholder='Enter your last name'
-                      required
-                    />
-                  </div>
+                <div>
+                  <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
+                    Full Name
+                  </label>
+                  <input
+                    type='text'
+                    name='name'
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
+                    placeholder='Enter your full name'
+                    required
+                    disabled={loading}
+                  />
                 </div>
                 <div>
                   <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
@@ -133,7 +179,23 @@ export default function SignupPage() {
                     className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
                     placeholder='Enter your email address'
                     required
+                    disabled={loading}
                   />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
+                    Account Type
+                  </label>
+                  <select
+                    name='userType'
+                    value={formData.userType}
+                    onChange={handleInputChange}
+                    className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
+                    disabled={loading}
+                  >
+                    <option value='customer' className='bg-[#232326]'>Customer</option>
+                    <option value='artisan' className='bg-[#232326]'>Artisan/Seller</option>
+                  </select>
                 </div>
               </div>
             )}
@@ -154,11 +216,13 @@ export default function SignupPage() {
                       className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors pr-12'
                       placeholder='Create a strong password'
                       required
+                      disabled={loading}
                     />
                     <button
                       type='button'
                       onClick={() => setShowPassword(!showPassword)}
                       className='absolute right-3 top-1/2 transform -translate-y-1/2 text-[#a1a1aa] hover:text-white transition-colors'
+                      disabled={loading}
                     >
                       {showPassword ? (
                         <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -186,11 +250,13 @@ export default function SignupPage() {
                       className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors pr-12'
                       placeholder='Confirm your password'
                       required
+                      disabled={loading}
                     />
                     <button
                       type='button'
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className='absolute right-3 top-1/2 transform -translate-y-1/2 text-[#a1a1aa] hover:text-white transition-colors'
+                      disabled={loading}
                     >
                       {showConfirmPassword ? (
                         <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -208,47 +274,6 @@ export default function SignupPage() {
                     <p className='text-red-400 text-sm mt-1'>Passwords do not match</p>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* Step 3: Business Information */}
-            {step === 3 && (
-              <div className='space-y-4'>
-                <div>
-                  <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
-                    Business Name
-                  </label>
-                  <input
-                    type='text'
-                    name='businessName'
-                    value={formData.businessName}
-                    onChange={handleInputChange}
-                    className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
-                    placeholder='Enter your business name'
-                    required
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
-                    Business Type
-                  </label>
-                  <select
-                    name='businessType'
-                    value={formData.businessType}
-                    onChange={handleInputChange}
-                    className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
-                    required
-                  >
-                    <option value='' className='bg-[#232326]'>Select business type</option>
-                    <option value='handmade' className='bg-[#232326]'>Handmade & Crafts</option>
-                    <option value='fashion' className='bg-[#232326]'>Fashion & Apparel</option>
-                    <option value='home' className='bg-[#232326]'>Home & Living</option>
-                    <option value='food' className='bg-[#232326]'>Food & Beverages</option>
-                    <option value='art' className='bg-[#232326]'>Art & Collectibles</option>
-                    <option value='beauty' className='bg-[#232326]'>Beauty & Personal Care</option>
-                    <option value='other' className='bg-[#232326]'>Other</option>
-                  </select>
-                </div>
                 <div className='flex items-start gap-3 pt-2'>
                   <input
                     type='checkbox'
@@ -257,6 +282,7 @@ export default function SignupPage() {
                     onChange={handleInputChange}
                     className='mt-1 w-4 h-4 text-[#d4845b] bg-white/10 border-white/20 rounded focus:ring-[#d4845b] focus:ring-2'
                     required
+                    disabled={loading}
                   />
                   <label className='text-sm text-[#a1a1aa]'>
                     I agree to the{' '}
@@ -275,18 +301,16 @@ export default function SignupPage() {
                   type='button'
                   onClick={() => setStep(step - 1)}
                   className='flex-1 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors'
+                  disabled={loading}
                 >
                   Back
                 </button>
               )}
-              {step < 3 ? (
+              {step < 2 ? (
                 <button
                   type='button'
                   onClick={handleNext}
-                  disabled={
-                    (step === 1 && (!formData.firstName || !formData.lastName || !formData.email)) ||
-                    (step === 2 && (!formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword))
-                  }
+                  disabled={!formData.name || !formData.email || loading}
                   className='flex-1 px-6 py-3 bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
                 >
                   Next
@@ -294,10 +318,23 @@ export default function SignupPage() {
               ) : (
                 <button
                   type='submit'
-                  disabled={!formData.agreeToTerms}
-                  className='flex-1 px-6 py-3 bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                  disabled={
+                    !formData.password || 
+                    !formData.confirmPassword || 
+                    formData.password !== formData.confirmPassword ||
+                    !formData.agreeToTerms ||
+                    loading
+                  }
+                  className='flex-1 px-6 py-3 bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center'
                 >
-                  Create Account
+                  {loading ? (
+                    <>
+                      <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2'></div>
+                      Creating Account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
                 </button>
               )}
             </div>
