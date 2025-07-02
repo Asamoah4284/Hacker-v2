@@ -110,11 +110,31 @@ export default function Navigation() {
           )}
         </button>
         <NavLink to='/' className='flex items-center group'>
-          <img
-            src={kolaLogo}
-            alt='Kola Logo'
-            className='h-12 w-auto object-contain group-hover:scale-105 transition-transform'
-          />
+          <div className='relative h-12 w-auto'>
+            {/* Original logo with gradient overlay (Approach 1) */}
+            <img
+              src={kolaLogo}
+              alt='Kola Logo'
+              className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
+              style={{
+                filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
+              }}
+            />
+            {/* Gradient overlay */}
+            <div 
+              className='absolute inset-0 h-12 w-auto bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b] rounded-lg opacity-60 mix-blend-color group-hover:scale-105 transition-transform'
+              style={{
+                maskImage: `url(${kolaLogo})`,
+                maskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                WebkitMaskImage: `url(${kolaLogo})`,
+                WebkitMaskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center'
+              }}
+            ></div>
+          </div>
         </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
