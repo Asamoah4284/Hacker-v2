@@ -613,13 +613,12 @@ export default function Dashboard() {
         <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4845b] via-[#f8e1da] to-[#d4845b] opacity-40 rounded-t-2xl'></div>
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
-            <div className='flex items-center gap-3 mb-4'>
+            <div className='flex items-center mb-4'>
               <img
                 src={kolaLogo}
                 alt='Kola Logo'
-                className='w-12 h-12 object-contain'
+                className='h-16 w-auto object-contain'
               />
-              <span className='font-bold text-2xl text-white'>Kola</span>
             </div>
             <p className='text-lg text-[#a1a1aa] mb-4'>
               Empowering African entrepreneurs worldwide through a marketplace

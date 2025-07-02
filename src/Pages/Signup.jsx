@@ -134,13 +134,12 @@ export default function SignupPage() {
           <div className='w-full max-w-md mx-auto'>
             {/* Logo */}
             <div className='text-center mb-8'>
-              <div className='flex items-center justify-center gap-3 mb-4'>
+              <div className='flex items-center justify-center mb-4'>
                 <img
                   src={kolaLogo}
                   alt='Kola Logo'
-                  className='w-12 h-12 object-contain'
+                  className='h-16 w-auto object-contain'
                 />
-                <span className='font-bold text-3xl text-white'>Kola</span>
               </div>
               <h1 className='text-2xl font-bold text-white mb-2'>
                 Join Our Community
