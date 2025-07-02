@@ -168,7 +168,7 @@ export default function Marketplace() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
+    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-gray-900 dark:text-white'>
       {/* Top Navigation Bar */}
       <Navigation />
 
@@ -182,14 +182,14 @@ export default function Marketplace() {
       >
         {/* Blurred Accent Shape */}
         <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
-        <div className='container mx-auto px-8 md:px-16 xl:px-32 text-center relative z-10'>
-          <h1 className='text-6xl md:text-7xl font-extrabold text-white mb-6 drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8 text-center relative z-10'>
+          <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-6 drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
             Discover African
           </h1>
-          <h1 className='text-6xl md:text-7xl font-extrabold text-[#d4845b] mb-6 drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
+          <h1 className='text-3xl md:text-4xl font-extrabold text-[#d4845b] mb-6 drop-shadow-[0_4px_32px_rgba(212,132,91,0.15)]'>
             Excellence
           </h1>
-          <p className='text-2xl text-[#a1a1aa] max-w-2xl mx-auto mb-10'>
+          <p className='text-base text-[#a1a1aa] max-w-2xl mx-auto mb-10'>
             Explore handcrafted treasures from Africa's most talented
             entrepreneurs. Every purchase supports local communities and
             preserves cultural heritage.
@@ -231,7 +231,7 @@ export default function Marketplace() {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
       >
-        <div className='container mx-auto px-8 md:px-16 xl:px-32'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8'>
           <div className='flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between'>
             {/* Categories */}
             <div className='flex flex-wrap gap-3'>
@@ -278,7 +278,7 @@ export default function Marketplace() {
 
       {/* Products Grid */}
       <section className='py-16'>
-        <div className='container mx-auto px-8 md:px-16 xl:px-32'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8'>
           {loading ? (
             <div className='text-center py-20'>
               <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4845b]'></div>
@@ -416,12 +416,12 @@ export default function Marketplace() {
 
       {/* Featured Sellers Section */}
       <section className='py-20 bg-white/5'>
-        <div className='container mx-auto px-8 md:px-16 xl:px-32'>
+        <div className='mx-auto max-w-7xl px-4 md:px-8'>
           <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-white mb-4'>
+            <h2 className='text-2xl font-bold text-white mb-4'>
               Featured Sellers
             </h2>
-            <p className='text-xl text-[#a1a1aa] max-w-2xl mx-auto'>
+            <p className='text-base text-[#a1a1aa] max-w-2xl mx-auto'>
               Meet the talented entrepreneurs behind these amazing products
             </p>
           </div>

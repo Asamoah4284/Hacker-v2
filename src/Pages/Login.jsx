@@ -96,13 +96,13 @@ export default function LoginPage() {
               alt='African entrepreneur smiling'
               className='w-full max-w-xs rounded-2xl shadow-xl mb-8 object-cover'
             />
-            <h2 className='text-3xl font-extrabold text-white mb-4'>
+            <h2 className='text-xl font-extrabold text-white mb-4'>
               Welcome to Kola
             </h2>
-            <p className='text-lg text-[#a1a1aa] mb-2'>
+            <p className='text-base text-[#a1a1aa] mb-2'>
               Empowering Africa's most innovative entrepreneurs.
             </p>
-            <p className='text-base text-[#f8e1da]'>
+            <p className='text-sm text-[#f8e1da]'>
               Sign in to discover, shop, and support authentic African products
               and stories.
             </p>
@@ -118,7 +118,7 @@ export default function LoginPage() {
             >
               {/* Header */}
               <div className='text-center mb-8'>
-                <h1 className='text-3xl font-bold text-white mb-2'>
+                <h1 className='text-xl font-bold text-white mb-2'>
                   Welcome Back
                 </h1>
                 <p className='text-[#a1a1aa]'>Sign in to your Kola account</p>

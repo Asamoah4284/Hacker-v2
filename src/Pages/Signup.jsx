@@ -117,14 +117,14 @@ export default function SignupPage() {
               alt='African entrepreneur smiling'
               className='w-full max-w-xs rounded-2xl shadow-xl mb-8 object-cover'
             />
-            <h2 className='text-3xl font-extrabold text-white mb-4'>
+            <h2 className='text-xl font-extrabold text-white mb-4'>
               Join Kola
             </h2>
-            <p className='text-lg text-[#a1a1aa] mb-2'>
+            <p className='text-base text-[#a1a1aa] mb-2'>
               Start your entrepreneurial journey with Africa's most vibrant
               marketplace.
             </p>
-            <p className='text-base text-[#f8e1da]'>
+            <p className='text-sm text-[#f8e1da]'>
               Create an account to discover, shop, and support authentic African
               products and stories.
             </p>
