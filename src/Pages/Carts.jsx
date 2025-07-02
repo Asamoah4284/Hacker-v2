@@ -1,10 +1,16 @@
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useState, useEffect, useRef } from 'react';
+import { usePaystackPayment } from 'react-paystack';
+import { apiService } from '../config/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartsPage() {
   const [cart, setCart] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [checkoutMessage, setCheckoutMessage] = useState('');
   const didLoad = useRef(false);
+  const navigate = useNavigate();
 
   // Function to load cart from localStorage
   const loadCart = () => {

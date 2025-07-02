@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   REGISTER: `${API_BASE_URL}/auth/register`,
   DASHBOARD: `${API_BASE_URL}/app/dashboard`,
+  ORDERS: `${API_BASE_URL}/app/orders`,
 };
 
 // API Functions
@@ -143,6 +144,31 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      throw error;
+    }
+  },
+
+  // Create order
+  async createOrder(orderData, token) {
+    try {
+      const response = await fetch(API_ENDPOINTS.ORDERS, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error creating order:', error);
       throw error;
     }
   }
