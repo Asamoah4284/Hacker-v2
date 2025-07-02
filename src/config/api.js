@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   REGISTER: `${API_BASE_URL}/auth/register`,
   DASHBOARD: `${API_BASE_URL}/app/dashboard`,
+  ORDERS: `${API_BASE_URL}/app/orders`,
 };
 
 // API Functions

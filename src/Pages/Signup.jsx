@@ -135,29 +135,19 @@ export default function SignupPage() {
             {/* Logo */}
             <div className='text-center mb-8'>
               <div className='flex items-center justify-center mb-4'>
-                <div className='relative h-16 w-auto'>
-                  {/* Original logo with enhanced vibrancy */}
+                <div className='relative h-16 w-auto overflow-hidden'>
+                  {/* Base logo with terracotta filter */}
                   <img
                     src={kolaLogo}
                     alt='Kola Logo'
                     className='h-16 w-auto object-contain relative z-10'
                     style={{
-                      filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
+                      filter: 'sepia(1) saturate(1.8) hue-rotate(25deg) brightness(1.1) contrast(1.3)',
                     }}
                   />
-                  {/* Gradient overlay - Clay terracotta to light peach */}
+                  {/* Gradient overlay for left-to-right transition */}
                   <div 
-                    className='absolute inset-0 h-16 w-auto bg-gradient-to-r from-[#d7906e] to-[#e9b19b] rounded-lg opacity-70 mix-blend-color'
-                    style={{
-                      maskImage: `url(${kolaLogo})`,
-                      maskSize: 'contain',
-                      maskRepeat: 'no-repeat',
-                      maskPosition: 'center',
-                      WebkitMaskImage: `url(${kolaLogo})`,
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskPosition: 'center'
-                    }}
+                    className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-60 mix-blend-overlay pointer-events-none'
                   ></div>
                 </div>
               </div>
