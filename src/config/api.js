@@ -8,10 +8,27 @@ export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
   REGISTER: `${API_BASE_URL}/auth/register`,
   DASHBOARD: `${API_BASE_URL}/app/dashboard`,
+  ORDERS: `${API_BASE_URL}/app/orders`,
 };
 
 // API Functions
 export const apiService = {
+  // fetch all orders
+
+  async getOrders() {
+    try {
+      const response = await fetch(API_ENDPOINTS.ORDERS);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching orders: ', error);
+      throw error;
+    }
+  },
+
   // Fetch all products
   async getProducts() {
     try {
