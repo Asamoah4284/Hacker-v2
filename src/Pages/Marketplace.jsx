@@ -201,7 +201,7 @@ export default function Marketplace() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className='w-full px-6 py-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl text-white placeholder-[#a1a1aa] focus:outline-none focus:border-[#d4845b] transition-colors'
               />
-              <button
+              <button 
                 type='submit'
                 className='absolute right-2 top-2 w-10 h-10 flex items-center justify-center rounded-xl bg-[#d4845b] text-white hover:bg-[#b8734a] transition-colors'
               >
@@ -285,8 +285,8 @@ export default function Marketplace() {
           ) : error ? (
             <div className='text-center py-20'>
               <p className='text-red-400 mb-4'>{error}</p>
-              <button
-                onClick={() => window.location.reload()}
+              <button 
+                onClick={() => window.location.reload()} 
                 className='px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
               >
                 Try Again
@@ -305,8 +305,8 @@ export default function Marketplace() {
                       {/* Product Image */}
                       <div className='relative h-64 bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center overflow-hidden'>
                         {product.imageUrl ? (
-                          <img
-                            src={product.imageUrl}
+                          <img 
+                            src={product.imageUrl} 
                             alt={product.name}
                             className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
                           />
@@ -321,7 +321,7 @@ export default function Marketplace() {
                           </div>
                         )}
                       </div>
-
+                      
                       {/* Product Info */}
                       <div className='p-6'>
                         <div className='flex items-center gap-2 mb-2'>
@@ -345,16 +345,16 @@ export default function Marketplace() {
                             ({transformedProduct.reviews})
                           </span>
                         </div>
-
+                        
                         <h3 className='font-bold text-lg text-white mb-2 group-hover:text-[#d4845b] transition-colors'>
                           {product.name}
                         </h3>
-
+                        
                         <p className='text-[#a1a1aa] text-sm mb-3'>
                           by {transformedProduct.seller} •{' '}
                           {transformedProduct.location}
                         </p>
-
+                        
                         <div className='flex items-center justify-between mb-4'>
                           <div className='flex items-center gap-2'>
                             <span className='text-2xl font-bold text-white'>
@@ -368,7 +368,7 @@ export default function Marketplace() {
                             )}
                           </div>
                           <span className='text-sm text-[#d4845b] font-medium'>
-                            {transformedProduct.originalPrice > product.price
+                            {transformedProduct.originalPrice > product.price 
                               ? `${Math.round(
                                   ((transformedProduct.originalPrice -
                                     product.price) /
@@ -378,7 +378,7 @@ export default function Marketplace() {
                               : ''}
                           </span>
                         </div>
-
+                        
                         <button
                           className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
                           onClick={() => handleAddToCart(transformedProduct)}
@@ -390,13 +390,13 @@ export default function Marketplace() {
                   );
                 })}
               </div>
-
+              
               {filteredAndSortedProducts.length === 0 && !loading && (
                 <div className='text-center py-20'>
                   <p className='text-[#a1a1aa] text-xl'>
                     No products found matching your criteria.
                   </p>
-                  <button
+                  <button 
                     onClick={() => {
                       setSelectedCategory('All Products');
                       setSearchTerm('');
