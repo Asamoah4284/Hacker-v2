@@ -74,10 +74,6 @@ export default function Navigation() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
   const handleLogout = () => {
     // Clear all authentication data
     localStorage.removeItem('isLoggedIn');
@@ -155,7 +151,8 @@ export default function Navigation() {
         ))}
       </div>
       <div className='flex items-center gap-4'>
-        {/* Dark Mode Toggle */}
+        {/* Dark Mode Toggle (commented out) */}
+        {/*
         <button
           onClick={toggleDarkMode}
           className='w-9 h-9 flex items-center justify-center rounded-full bg-gray-200/50 dark:bg-gray-700/10 hover:bg-[#d4845b]/80 dark:hover:bg-[#d4845b]/60 text-gray-600 dark:text-gray-400 hover:text-white transition-colors'
@@ -186,6 +183,7 @@ export default function Navigation() {
             </svg>
           )}
         </button>
+        */}
 
         {isLoggedIn ? (
           <>

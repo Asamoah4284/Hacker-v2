@@ -28,7 +28,7 @@ const team = [
 
 export default function AboutPage() {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b] text-gray-800 dark:text-white'>
+    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
       <Navigation />
 
       {/* Hero Section */}
