@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
+import kolaLogo from '../assets/images/logo/kola-logo.png';
 
 // Default empty data structure for dashboard
 const defaultData = {
@@ -614,9 +615,11 @@ export default function Dashboard() {
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
             <div className='flex items-center gap-3 mb-4'>
-              <span className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-2xl font-bold shadow'>
-                K
-              </span>
+              <img
+                src={kolaLogo}
+                alt='Kola Logo'
+                className='w-12 h-12 object-contain'
+              />
               <span className='font-bold text-2xl text-white'>Kola</span>
             </div>
             <p className='text-lg text-[#a1a1aa] mb-4'>
