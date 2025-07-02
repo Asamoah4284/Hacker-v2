@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import OrdersPage from './Pages/Orders';
 import CartsPage from './Pages/Carts';
 import ScrollToTop from './components/ScrollToTop';
+import EntrepreneurDashboard from './Pages/EntrepreneurDashboard';
 
 function App() {
   return (
@@ -28,6 +29,15 @@ function App() {
           element={
             <ProtectedRoute>
               <EntrepreneurPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path='/entrepreneur/:id'
+          element={
+            <ProtectedRoute>
+              <EntrepreneurDashboard />
             </ProtectedRoute>
           }
         />

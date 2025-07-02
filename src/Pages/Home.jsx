@@ -18,6 +18,11 @@ import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
+// Import local hero images
+import hero1 from '../assets/images/hero/hero-1.webp';
+import hero2 from '../assets/images/hero/hero-2.webp';
+import hero3 from '../assets/images/hero/hero-3.webp';
+
 // Local UI components
 function Button({ children, className = '', variant, size, ...props }) {
   let base =
@@ -77,21 +82,21 @@ function Input({ className = '', ...props }) {
 const heroImages = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    src: hero1,
     alt: 'African woman entrepreneur working on traditional textiles',
     name: 'Kofi Pottery',
     location: 'Kumasi, Ghana',
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2066&q=80',
+    src: hero2,
     alt: 'African craftsman creating beautiful wooden sculptures',
     name: 'Kwame Woodcraft',
     location: 'Accra, Ghana',
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+    src: hero3,
     alt: 'African fashion designer showcasing traditional patterns',
     name: 'Zara Fashion House',
     location: 'Cape Town, South Africa',
@@ -323,12 +328,12 @@ export default function HomePage() {
           </div>
           {/* Right Column */}
           <div className='relative flex flex-col items-center animate-fade-in'>
-            <div className='relative min-h-[440px] w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl bg-white/10 backdrop-blur-lg border border-white/10 group transition-all duration-500 hover:scale-105'>
+            <div className='relative h-[440px] w-full max-w-xl overflow-hidden rounded-3xl shadow-2xl bg-white/10 backdrop-blur-lg border border-white/10 group transition-all duration-500 hover:scale-105'>
               <img
                 key={currentImageIndex}
                 src={heroImages[currentImageIndex].src}
                 alt={heroImages[currentImageIndex].alt}
-                className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
+                className='absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700'
               />
               <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 rounded-b-3xl'>
                 <div className='text-white'>

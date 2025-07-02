@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
@@ -25,6 +25,10 @@ export default function Marketplace() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [addToCartMsg, setAddToCartMsg] = useState('');
+  const navigate = useNavigate();
+  const [shopLoading, setShopLoading] = useState('');
+  const [shopError, setShopError] = useState('');
+  const [featuredSellers, setFeaturedSellers] = useState([]);
 
   // Fetch products from API
   useEffect(() => {
@@ -43,6 +47,23 @@ export default function Marketplace() {
     };
 
     fetchProducts();
+  }, []);
+
+  // Fetch featured sellers (entrepreneurs) from API
+  useEffect(() => {
+    const fetchFeaturedSellers = async () => {
+      try {
+        const data = await apiService.getArtisans();
+        const artisans = data.artisans || [];
+        // Sort by rating descending, then take first 3
+        const sorted = [...artisans].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        setFeaturedSellers(sorted.slice(0, 3));
+      } catch (err) {
+        // fallback: no featured sellers
+        setFeaturedSellers([]);
+      }
+    };
+    fetchFeaturedSellers();
   }, []);
 
   // Filter and sort products
@@ -124,6 +145,24 @@ export default function Marketplace() {
     setAddToCartMsg(`${product.name} added to cart!`);
     setTimeout(() => setAddToCartMsg(''), 1500);
     window.dispatchEvent(new Event('storage'));
+  };
+
+  const handleViewShop = async (sellerName) => {
+    setShopLoading(sellerName);
+    setShopError('');
+    try {
+      const artisans = await apiService.getArtisans();
+      const found = artisans.find(a => a.name === sellerName);
+      if (found) {
+        navigate(`/entrepreneur/${found.id}/dashboard`);
+      } else {
+        setShopError('Entrepreneur not found.');
+      }
+    } catch (err) {
+      setShopError('Failed to fetch entrepreneur data.');
+    } finally {
+      setShopLoading('');
+    }
   };
 
   return (
@@ -386,72 +425,48 @@ export default function Marketplace() {
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {[
-              {
-                name: 'David Mwangi',
-                location: 'Nairobi, Kenya',
-                products: 2,
-                rating: 4.9,
-                specialty: 'Jewelry Making',
-              },
-              {
-                name: 'Fatima Benali',
-                location: 'Fez, Morocco',
-                products: 2,
-                rating: 4.8,
-                specialty: 'Ceramic Pottery',
-              },
-              {
-                name: 'Kwame Asante',
-                location: 'Kumasi, Ghana',
-                products: 2,
-                rating: 4.7,
-                specialty: 'Wood Carving',
-              },
-            ].map((seller, i) => (
+            {featuredSellers.map((seller, i) => (
               <div
-                key={i}
+                key={seller.id}
                 className='bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'
               >
                 <div className='flex items-center gap-4 mb-6'>
                   <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419]'>
-                    {seller.name
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')}
+                    {seller.imageUrl ? (
+                      <img src={seller.imageUrl} alt={seller.name} className='w-full h-full object-cover rounded-full' />
+                    ) : (
+                      seller.name.split(' ').map((n) => n[0]).join('')
+                    )}
                   </div>
                   <div>
-                    <h3 className='font-bold text-xl text-white'>
-                      {seller.name}
-                    </h3>
+                    <h3 className='font-bold text-xl text-white'>{seller.name}</h3>
                     <p className='text-[#a1a1aa]'>{seller.location}</p>
                   </div>
                 </div>
-
                 <div className='space-y-3 mb-6'>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Products:</span>
-                    <span className='text-white font-semibold'>
-                      {seller.products}
-                    </span>
+                    <span className='text-white font-semibold'>{seller.products?.length || 0}</span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Rating:</span>
-                    <span className='text-white font-semibold'>
-                      {seller.rating} ⭐
-                    </span>
+                    <span className='text-white font-semibold'>{seller.rating?.toFixed(1) || 'N/A'} ⭐</span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Specialty:</span>
-                    <span className='text-[#d4845b] font-semibold'>
-                      {seller.specialty}
-                    </span>
+                    <span className='text-[#d4845b] font-semibold'>{seller.specialty}</span>
                   </div>
                 </div>
-
-                <button className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'>
-                  View Shop
+                <button
+                  className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
+                  onClick={() => handleViewShop(seller.name)}
+                  disabled={shopLoading === seller.name}
+                >
+                  {shopLoading === seller.name ? 'Loading...' : 'View Shop'}
                 </button>
+                {shopError && (
+                  <div className='text-red-400 text-sm mt-2'>{shopError}</div>
+                )}
               </div>
             ))}
           </div>
