@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion';
 import {
   ArrowRight,
   Sparkles,
@@ -265,7 +267,13 @@ export default function HomePage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className='relative py-28 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b]'>
+      <motion.section
+        className='relative py-28 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b]'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         {/* Animated Gradient Overlay */}
         <div className='absolute inset-0 pointer-events-none z-0'>
           <div className='absolute left-[-20%] top-[-20%] w-[600px] h-[600px] bg-gradient-to-br from-[#d4845b]/40 via-[#f8e1da]/30 to-transparent rounded-full blur-3xl animate-pulse-slow'></div>
@@ -350,10 +358,16 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Stats Section */}
-      <section className='py-16'>
+      <motion.section
+        className='py-16'
+        initial={{ opacity: 0, scale: 0.96 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-12 text-center'>
           {stats.map((stat, i) => (
             <div key={i} className='flex flex-col items-center'>
@@ -365,10 +379,16 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-      </section>
+      </motion.section>
 
       {/* Featured Products Section */}
-      <section className='py-20'>
+      <motion.section
+        className='py-20'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4'>
           <h2 className='text-5xl font-bold text-white mb-4 text-center'>
             Featured Products
@@ -476,10 +496,16 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Meet Our Entrepreneurs */}
-      <section className='py-20'>
+      <motion.section
+        className='py-20'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4'>
           <h2 className='text-5xl font-bold text-white mb-4 text-center'>
             Meet Our Entrepreneurs
@@ -558,10 +584,16 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Why Choose Our Platform */}
-      <section className='py-20'>
+      <motion.section
+        className='py-20'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4'>
           <h2 className='text-5xl font-bold text-white mb-4 text-center'>
             Why Choose Our Platform?
@@ -585,10 +617,16 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Call to Action */}
-      <section className='py-20'>
+      <motion.section
+        className='py-20'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4 text-center'>
           <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
             Ready to Make a Difference?
@@ -613,10 +651,16 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Newsletter */}
-      <section className='py-16'>
+      <motion.section
+        className='py-16'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-4 flex justify-center'>
           <div className='bg-[#232326]/80 backdrop-blur-lg rounded-2xl p-12 w-full max-w-xl shadow-xl'>
             <h3 className='text-2xl font-semibold mb-4 text-white text-center'>
@@ -641,7 +685,7 @@ export default function HomePage() {
             </form>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>

@@ -41,6 +41,7 @@ export default function Navigation() {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const cartCount = useCartCount();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Check if user is logged in
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -91,11 +92,47 @@ export default function Navigation() {
   return (
     <nav className='sticky top-0 z-50 bg-gray-50/80 dark:bg-gray-900/10 backdrop-blur-lg shadow border-b border-gray-200/50 dark:border-gray-700/10 px-8 md:px-16 xl:px-32 py-3 flex items-center justify-between gap-8'>
       <div className='flex items-center gap-3'>
+        {/* Hamburger for mobile (left of logo) */}
+        <button
+          className='md:hidden mr-2 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:bg-[#f8e1da]/40 dark:hover:bg-[#232326]/40 transition-colors'
+          aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMobileNavOpen((v) => !v)}
+        >
+          {mobileNavOpen ? (
+            <svg
+              className='w-6 h-6'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M6 18L18 6M6 6l12 12'
+              />
+            </svg>
+          ) : (
+            <svg
+              className='w-6 h-6'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M4 6h16M4 12h16M4 18h16'
+              />
+            </svg>
+          )}
+        </button>
         <NavLink to='/' className='flex items-center gap-3 group'>
           <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-xl font-bold shadow group-hover:scale-105 transition-transform'>
             K
           </span>
-          <span className='font-bold text-xl text-gray-800 dark:text-gray-100 group-hover:text-[#d4845b] transition-colors'>
+          <span className='font-bold text-xl text-gray-800 dark:text-gray-100 group-hover:text-[#d4845b] transition-colors hidden md:inline'>
             Kola
           </span>
         </NavLink>
@@ -281,6 +318,57 @@ export default function Navigation() {
           </div>
         )}
       </div>
+      {/* Mobile Nav Drawer */}
+      {mobileNavOpen && (
+        <div
+          className='fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden'
+          onClick={() => setMobileNavOpen(false)}
+        >
+          <nav
+            className='fixed left-0 top-0 z-50 w-64 h-full bg-white dark:bg-[#18181b] shadow-xl p-8 flex flex-col gap-6 transition-transform duration-300 md:hidden'
+            style={{
+              transform: mobileNavOpen ? 'translateX(0)' : 'translateX(-100%)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className='self-end mb-6 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:bg-[#f8e1da]/40 dark:hover:bg-[#232326]/40 transition-colors'
+              aria-label='Close menu'
+              onClick={() => setMobileNavOpen(false)}
+            >
+              <svg
+                className='w-6 h-6'
+                fill='none'
+                stroke='currentColor'
+                strokeWidth='2'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  d='M6 18L18 6M6 6l12 12'
+                />
+              </svg>
+            </button>
+            {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
+              <NavLink
+                key={link}
+                to={link === 'Home' ? '/' : '/' + link.toLowerCase()}
+                className={({ isActive }) =>
+                  `block w-full text-left px-4 py-3 rounded-lg font-semibold text-lg transition-colors ` +
+                  (isActive
+                    ? 'text-[#d4845b] bg-[#f8e1da]/60 dark:bg-[#d4845b]/20'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-[#d4845b] hover:bg-[#f8e1da]/30 dark:hover:bg-[#d4845b]/20')
+                }
+                end={link === 'Home'}
+                onClick={() => setMobileNavOpen(false)}
+              >
+                {link}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      )}
     </nav>
   );
 }

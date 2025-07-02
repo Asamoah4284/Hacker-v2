@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -29,19 +31,22 @@ export default function LoginPage() {
 
     try {
       // Call the real API
-      const response = await apiService.login(formData.email, formData.password);
-      
+      const response = await apiService.login(
+        formData.email,
+        formData.password
+      );
+
       // Store authentication data
       if (response.token) {
         localStorage.setItem('authToken', response.token);
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userEmail', formData.email);
-        
+
         // Store user data if available
         if (response.user) {
           localStorage.setItem('userData', JSON.stringify(response.user));
         }
-        
+
         // Navigate to dashboard
         navigate('/dashboard');
       } else {
@@ -49,15 +54,16 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error('Login error:', err);
-      
+
       // Show user-friendly error message
-      if (err.message && (
-        err.message.toLowerCase().includes('user not found') ||
-        err.message.toLowerCase().includes('invalid credentials') ||
-        err.message.toLowerCase().includes('unauthorized') ||
-        err.message.toLowerCase().includes('401') ||
-        err.message.toLowerCase().includes('404')
-      )) {
+      if (
+        err.message &&
+        (err.message.toLowerCase().includes('user not found') ||
+          err.message.toLowerCase().includes('invalid credentials') ||
+          err.message.toLowerCase().includes('unauthorized') ||
+          err.message.toLowerCase().includes('401') ||
+          err.message.toLowerCase().includes('404'))
+      ) {
         setError('User not found. Please check your email and password.');
       } else {
         setError('Login failed. Please check your credentials and try again.');
@@ -72,7 +78,12 @@ export default function LoginPage() {
       <Navigation />
 
       {/* Login Section */}
-      <section className='relative py-20 overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b]'>
+      <motion.section
+        className='relative py-20 overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b]'
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         {/* Blurred Accent Shapes */}
         <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
         <div className='absolute -bottom-32 -right-32 w-[400px] h-[400px] bg-[#f8e1da] opacity-15 rounded-full blur-3xl pointer-events-none'></div>
@@ -80,7 +91,12 @@ export default function LoginPage() {
         <div className='container mx-auto px-8 md:px-16 xl:px-32 flex justify-center items-center min-h-[calc(100vh-200px)] relative z-10'>
           <div className='w-full max-w-md'>
             {/* Login Form Card */}
-            <div className='bg-white/80 dark:bg-gray-800/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/10 p-8 md:p-10 animate-fade-in-up'>
+            <motion.div
+              className='bg-white/80 dark:bg-gray-800/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/10 p-8 md:p-10'
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+            >
               {/* Header */}
               <div className='text-center mb-8'>
                 <h1 className='text-3xl font-bold text-white mb-2'>
@@ -175,7 +191,8 @@ export default function LoginPage() {
                 <p className='text-sm text-[#a1a1aa] text-center'>
                   <strong className='text-[#d4845b]'>Connected to:</strong>
                   <br />
-                  {apiService.API_ENDPOINTS?.LOGIN || 'https://citsa-hackathon-2.onrender.com/auth/login'}
+                  {apiService.API_ENDPOINTS?.LOGIN ||
+                    'https://citsa-hackathon-2.onrender.com/auth/login'}
                 </p>
               </div>
 
@@ -191,10 +208,10 @@ export default function LoginPage() {
                   </Link>
                 </p>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>

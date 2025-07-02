@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
@@ -30,7 +32,13 @@ export default function AboutPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className='relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b]'>
+      <motion.section
+        className='relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b]'
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      >
         {/* Blurred Accent Shape */}
         <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
         <div className='container mx-auto px-8 md:px-16 xl:px-32 text-center relative z-10'>
@@ -43,10 +51,16 @@ export default function AboutPage() {
             that celebrates creativity, authenticity, and impact.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* Mission & Team Section */}
-      <section className='py-20'>
+      <motion.section
+        className='py-20'
+        initial={{ opacity: 0, scale: 0.96 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.1, ease: 'easeOut' }}
+      >
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start animate-fade-in-up'>
           {/* Mission Statement */}
           <div className='space-y-8'>
@@ -103,7 +117,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>

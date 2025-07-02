@@ -10,10 +10,12 @@ import LoginPage from './Pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import OrdersPage from './Pages/Orders';
 import CartsPage from './Pages/Carts';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Home Route */}
         <Route path='/' element={<Home />} />
