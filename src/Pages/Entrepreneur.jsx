@@ -1,73 +1,70 @@
 import { Link } from 'react-router-dom';
-
-// Dummy entrepreneur data
-const entrepreneurs = [
-  {
-    name: 'Aisha Okechukwu',
-    business: 'Nubian Crafts',
-    category: 'Handmade Jewelry',
-    img: '',
-    bio: 'Creating authentic African jewelry that tells stories of heritage and culture.',
-    location: 'Lagos, Nigeria',
-    rating: 4.9,
-    products: 45,
-  },
-  {
-    name: 'Kwame Addo',
-    business: 'Ghanaian Textiles',
-    category: 'Fashion & Apparel',
-    img: '',
-    bio: 'Reviving traditional Ghanaian textile patterns for modern fashion.',
-    location: 'Accra, Ghana',
-    rating: 4.8,
-    products: 32,
-  },
-  {
-    name: 'Fatima Diallo',
-    business: 'Senegal Home Decor',
-    category: 'Home & Living',
-    img: '',
-    bio: 'Bringing West African aesthetics to contemporary home design.',
-    location: 'Dakar, Senegal',
-    rating: 4.7,
-    products: 28,
-  },
-  {
-    name: 'David Mwangi',
-    business: 'Kenyan Coffee Co.',
-    category: 'Food & Beverages',
-    img: '',
-    bio: 'Premium Kenyan coffee beans sourced directly from local farmers.',
-    location: 'Nairobi, Kenya',
-    rating: 4.9,
-    products: 15,
-  },
-  {
-    name: 'Zara Hassan',
-    business: 'Moroccan Pottery',
-    category: 'Art & Crafts',
-    img: '',
-    bio: 'Handcrafted Moroccan ceramics with traditional geometric patterns.',
-    location: 'Marrakech, Morocco',
-    rating: 4.6,
-    products: 38,
-  },
-  {
-    name: 'Emeka Okonkwo',
-    business: 'Igbo Woodworks',
-    category: 'Furniture',
-    img: '',
-    bio: 'Custom wooden furniture inspired by Igbo cultural heritage.',
-    location: 'Enugu, Nigeria',
-    rating: 4.8,
-    products: 22,
-  },
-];
+import { useState, useEffect } from 'react';
+import { apiService } from '../config/api';
 
 export default function EntrepreneurPage() {
+  const [artisans, setArtisans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedSpecialty, setSelectedSpecialty] = useState('All Specialties');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch artisans from API
+  useEffect(() => {
+    const fetchArtisans = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getArtisans();
+        setArtisans(data.artisans || []);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch artisans. Please try again later.');
+        console.error('Error fetching artisans:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArtisans();
+  }, []);
+
+  // Get unique specialties for filtering
+  const specialties = ['All Specialties', ...new Set(artisans.map(artisan => artisan.specialty))];
+
+  // Filter and search artisans
+  const filteredArtisans = artisans.filter(artisan => {
+    const matchesSpecialty = selectedSpecialty === 'All Specialties' || artisan.specialty === selectedSpecialty;
+    const matchesSearch = searchTerm === '' || 
+      artisan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artisan.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      artisan.location.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSpecialty && matchesSearch;
+  });
+
+  // Handle search
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Search is handled by the filter function above
+  };
+
+  // Transform API artisan to match component structure
+  const transformArtisan = (artisan) => ({
+    id: artisan.id,
+    name: artisan.name,
+    business: artisan.name + ' Crafts', // Generate business name
+    category: artisan.specialty,
+    img: artisan.imageUrl,
+    bio: artisan.story,
+    location: artisan.location,
+    rating: 4.5 + Math.random() * 0.5, // Generate random rating between 4.5-5.0
+    products: artisan.productCount || 0,
+    specialty: artisan.specialty,
+    productList: artisan.products || []
+  });
+
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
-      {/* Top Navigation Bar (same as Home) */}
+      {/* Top Navigation Bar */}
       <nav className='sticky top-0 z-50 bg-white/10 backdrop-blur-lg shadow border-b border-white/10 px-8 md:px-16 xl:px-32 py-3 flex items-center justify-between gap-8'>
         <div className='flex items-center gap-3'>
           <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] text-xl font-bold shadow'>
@@ -76,11 +73,15 @@ export default function EntrepreneurPage() {
           <span className='font-bold text-xl text-white'>Kola</span>
         </div>
         <div className='hidden md:flex gap-8'>
-          {['Home', 'Marketplace', 'Entrepreneurs', 'About'].map((link) => (
+          {['Home', 'Marketplace', 'Entrepreneur', 'About'].map((link) => (
             <Link
               key={link}
               to={link === 'Home' ? '/' : '/' + link.toLowerCase()}
-              className='text-[#a1a1aa] font-medium px-2 py-1 rounded transition-colors hover:text-[#d4845b] hover:bg-[#f8e1da]/30 focus:text-[#d4845b] focus:bg-[#f8e1da]/30'
+              className={`font-medium px-2 py-1 rounded transition-colors ${
+                link === 'Entrepreneur' 
+                  ? 'text-[#d4845b] bg-[#f8e1da]/30' 
+                  : 'text-[#a1a1aa] hover:text-[#d4845b] hover:bg-[#f8e1da]/30'
+              }`}
             >
               {link}
             </Link>
@@ -168,6 +169,49 @@ export default function EntrepreneurPage() {
             Discover the incredible stories and products from Africa's most
             innovative entrepreneurs who are building businesses that make a difference.
           </p>
+          
+          {/* Search Bar */}
+          <div className='flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto'>
+            <form onSubmit={handleSearch} className='relative w-full'>
+              <input
+                type='text'
+                placeholder='Search for artisans, specialties, or locations...'
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className='w-full px-6 py-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl text-white placeholder-[#a1a1aa] focus:outline-none focus:border-[#d4845b] transition-colors'
+              />
+              <button 
+                type='submit'
+                className='absolute right-2 top-2 w-10 h-10 flex items-center justify-center rounded-xl bg-[#d4845b] text-white hover:bg-[#b8734a] transition-colors'
+              >
+                <svg className='w-5 h-5' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                  <circle cx='11' cy='11' r='8' />
+                  <path d='M21 21l-4.35-4.35' />
+                </svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Filters Section */}
+      <section className='py-8 border-b border-white/10'>
+        <div className='container mx-auto px-8 md:px-16 xl:px-32'>
+          <div className='flex flex-wrap gap-3 justify-center'>
+            {specialties.map((specialty) => (
+              <button
+                key={specialty}
+                onClick={() => setSelectedSpecialty(specialty)}
+                className={`px-4 py-2 rounded-xl font-medium transition-all ${
+                  selectedSpecialty === specialty
+                    ? 'bg-[#d4845b] text-white shadow-lg'
+                    : 'bg-white/10 text-[#a1a1aa] hover:bg-white/20 hover:text-white'
+                }`}
+              >
+                {specialty}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -181,72 +225,109 @@ export default function EntrepreneurPage() {
             </p>
           </div>
           
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {entrepreneurs.map((entrepreneur, i) => (
-              <div key={i} className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105'>
-                {/* Avatar */}
-                <div className='flex items-center gap-4 mb-6'>
-                  <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419] shadow'>
-                    {entrepreneur.img ? (
-                      <img
-                        src={entrepreneur.img}
-                        alt={entrepreneur.name}
-                        className='w-full h-full object-cover rounded-full'
-                      />
-                    ) : (
-                      entrepreneur.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')
-                    )}
-                  </div>
-                  <div>
-                    <div className='font-bold text-lg text-white'>
-                      {entrepreneur.name}
+          {loading ? (
+            <div className='text-center py-20'>
+              <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4845b]'></div>
+              <p className='text-[#a1a1aa] mt-4'>Loading entrepreneurs...</p>
+            </div>
+          ) : error ? (
+            <div className='text-center py-20'>
+              <p className='text-red-400 mb-4'>{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className='px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
+              >
+                Try Again
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+                {filteredArtisans.map((artisan) => {
+                  const transformedArtisan = transformArtisan(artisan);
+                  return (
+                    <div key={artisan.id} className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105'>
+                      {/* Avatar */}
+                      <div className='flex items-center gap-4 mb-6'>
+                        <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419] shadow overflow-hidden'>
+                          {artisan.imageUrl ? (
+                            <img
+                              src={artisan.imageUrl}
+                              alt={artisan.name}
+                              className='w-full h-full object-cover'
+                            />
+                          ) : (
+                            artisan.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                          )}
+                        </div>
+                        <div>
+                          <div className='font-bold text-lg text-white'>
+                            {artisan.name}
+                          </div>
+                          <div className='text-[#d4845b] font-semibold text-sm'>
+                            {transformedArtisan.business}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Business Info */}
+                      <div className='space-y-3 mb-6'>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-[#a1a1aa] text-sm'>Specialty:</span>
+                          <span className='text-white font-medium'>{artisan.specialty}</span>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <span className='text-[#a1a1aa] text-sm'>Location:</span>
+                          <span className='text-white font-medium'>{artisan.location}</span>
+                        </div>
+                        <div className='flex items-center gap-4'>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-[#a1a1aa] text-sm'>Rating:</span>
+                            <span className='text-[#d4845b] font-bold'>{transformedArtisan.rating.toFixed(1)}</span>
+                            <svg className='w-4 h-4 text-[#d4845b]' fill='currentColor' viewBox='0 0 20 20'>
+                              <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
+                            </svg>
+                          </div>
+                          <div className='flex items-center gap-1'>
+                            <span className='text-[#a1a1aa] text-sm'>Products:</span>
+                            <span className='text-white font-bold'>{artisan.productCount || 0}</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Bio */}
+                      <p className='text-[#a1a1aa] text-sm mb-6 leading-relaxed'>
+                        {artisan.story}
+                      </p>
+
+                      {/* Action Button */}
+                      <button className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'>
+                        View Products
+                      </button>
                     </div>
-                    <div className='text-[#d4845b] font-semibold text-sm'>
-                      {entrepreneur.business}
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Business Info */}
-                <div className='space-y-3 mb-6'>
-                  <div className='flex items-center gap-2'>
-                    <span className='text-[#a1a1aa] text-sm'>Category:</span>
-                    <span className='text-white font-medium'>{entrepreneur.category}</span>
-                  </div>
-                  <div className='flex items-center gap-2'>
-                    <span className='text-[#a1a1aa] text-sm'>Location:</span>
-                    <span className='text-white font-medium'>{entrepreneur.location}</span>
-                  </div>
-                  <div className='flex items-center gap-4'>
-                    <div className='flex items-center gap-1'>
-                      <span className='text-[#a1a1aa] text-sm'>Rating:</span>
-                      <span className='text-[#d4845b] font-bold'>{entrepreneur.rating}</span>
-                      <svg className='w-4 h-4 text-[#d4845b]' fill='currentColor' viewBox='0 0 20 20'>
-                        <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
-                      </svg>
-                    </div>
-                    <div className='flex items-center gap-1'>
-                      <span className='text-[#a1a1aa] text-sm'>Products:</span>
-                      <span className='text-white font-bold'>{entrepreneur.products}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Bio */}
-                <p className='text-[#a1a1aa] text-sm mb-6 leading-relaxed'>
-                  {entrepreneur.bio}
-                </p>
-                
-                {/* Action Button */}
-                <button className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'>
-                  View Products
-                </button>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+              
+              {filteredArtisans.length === 0 && !loading && (
+                <div className='text-center py-20'>
+                  <p className='text-[#a1a1aa] text-xl'>No entrepreneurs found matching your criteria.</p>
+                  <button 
+                    onClick={() => {
+                      setSelectedSpecialty('All Specialties');
+                      setSearchTerm('');
+                    }}
+                    className='mt-4 px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
 
@@ -268,7 +349,7 @@ export default function EntrepreneurPage() {
         </div>
       </section>
 
-      {/* Footer (same as Home) */}
+      {/* Footer */}
       <footer className='relative bg-[#18181b] border-t border-white/10 pt-16 pb-8 text-base backdrop-blur-lg shadow-2xl rounded-t-2xl animate-fade-in-up'>
         <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4845b] via-[#f8e1da] to-[#d4845b] opacity-40 rounded-t-2xl'></div>
         <div className='container mx-auto px-8 md:px-16 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
