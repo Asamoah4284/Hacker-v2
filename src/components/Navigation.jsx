@@ -109,15 +109,12 @@ export default function Navigation() {
             </svg>
           )}
         </button>
-        <NavLink to='/' className='flex items-center gap-3 group'>
+        <NavLink to='/' className='flex items-center group'>
           <img
             src={kolaLogo}
             alt='Kola Logo'
-            className='w-10 h-10 object-contain group-hover:scale-105 transition-transform'
+            className='h-12 w-auto object-contain group-hover:scale-105 transition-transform'
           />
-          <span className='font-bold text-xl text-gray-800 dark:text-gray-100 group-hover:text-[#d4845b] transition-colors hidden md:inline'>
-            Kola
-          </span>
         </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
