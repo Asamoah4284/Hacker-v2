@@ -14,6 +14,7 @@ const Dashboard = lazy(() => import('./Pages/Dashboard'));
 const LoginPage = lazy(() => import('./Pages/Login'));
 const OrdersPage = lazy(() => import('./Pages/Orders'));
 const CartsPage = lazy(() => import('./Pages/Carts'));
+const SuccessPage = lazy(() => import('./Pages/SuccessPage'));
 
 function App() {
   return (
@@ -90,6 +91,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <CartsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path='/success'
+            element={
+              <ProtectedRoute>
+                <SuccessPage />
               </ProtectedRoute>
             }
           />

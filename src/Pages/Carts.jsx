@@ -11,8 +11,19 @@ export default function CartsPage() {
   const [showReferralModal, setShowReferralModal] = useState(false);
   const [referralLink, setReferralLink] = useState('');
   const [copied, setCopied] = useState(false);
+
   const didLoad = useRef(false);
   const navigate = useNavigate();
+
+  const copyReferralLink = () => {
+    console.log('Copying referral link:', referralLink);
+    navigator.clipboard.writeText(referralLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy referral link:', err);
+    });
+  };
 
   // Function to load cart from localStorage
   const loadCart = () => {
@@ -86,14 +97,31 @@ export default function CartsPage() {
   const initializePayment = usePaystackPayment(paystackConfig);
 
   const onPaystackSuccess = () => {
+    console.log('Payment successful, showing referral modal');
     setCheckoutMessage('Payment successful! Your order has been placed.');
-    setTimeout(() => {
-      navigate('/orders');
-    }, 2000);
+    
+    // Generate referral link
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const userId = userData?.id || 'user';
+    const baseUrl = window.location.origin;
+    const referralUrl = `${baseUrl}/marketplace?ref=${userId}`;
+    setReferralLink(referralUrl);
+    
+    // Show referral modal
+    setShowReferralModal(true);
+    console.log('Referral modal should now be visible');
   };
 
   const onPaystackClose = () => {
+    console.log('Payment modal closed');
     setCheckoutMessage('Payment was cancelled.');
+    // If cart is empty (meaning order was successful), show success page
+    if (cart.length === 0) {
+      console.log('Cart is empty, navigating to success page');
+      setTimeout(() => {
+        navigate('/success');
+      }, 1000);
+    }
   };
 
   const handleCheckout = async () => {
@@ -151,6 +179,7 @@ export default function CartsPage() {
         localStorage.removeItem('cart');
         // Now show Paystack modal
         initializePayment(onPaystackSuccess, onPaystackClose);
+        navigate('/success')
       } else {
         const errorData = await response.text();
         console.error('Server error:', errorData);
@@ -163,36 +192,6 @@ export default function CartsPage() {
       );
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  // Function to generate referral link
-  const generateReferralLink = () => {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const userId = userData?.id || userData?._id || 'anonymous';
-    const baseUrl = window.location.origin;
-    const referralCode = `${userId}_${Date.now()}`;
-    const link = `${baseUrl}/?ref=${referralCode}`;
-    
-    console.log('Generated referral link:', link);
-    console.log('User data for referral:', userData);
-    
-    // Store referral data in localStorage
-    localStorage.setItem('referralCode', referralCode);
-    localStorage.setItem('referralLink', link);
-    
-    return link;
-  };
-
-  // Function to copy referral link to clipboard
-  const copyReferralLink = async () => {
-    try {
-      await navigator.clipboard.writeText(referralLink);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-      console.log('Referral link copied to clipboard');
-    } catch (err) {
-      console.error('Failed to copy referral link:', err);
     }
   };
 
@@ -318,6 +317,7 @@ export default function CartsPage() {
       </section>
       
       {/* Referral Modal */}
+      {console.log('Modal visibility state:', showReferralModal, 'Referral link:', referralLink)}
       {showReferralModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8">
@@ -329,11 +329,11 @@ export default function CartsPage() {
               </div>
               
               <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                Share the Artisans Circle!
+                Join the Artisans Circle!
               </h2>
               
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Thank you for your purchase! Help us grow our community by sharing this referral link with your friends and family.
+                Thank you for your purchase! 🎉 You're now part of our artisan community. Share this referral link with friends and family to help grow our circle of creators and customers.
               </p>
               
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
@@ -353,24 +353,39 @@ export default function CartsPage() {
                 </div>
               </div>
               
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-3">
                 <button
                   onClick={() => {
+                    console.log('User clicked View Success Page');
                     setShowReferralModal(false);
                     setTimeout(() => {
-                      navigate('/orders');
+                      console.log('Navigating to success page');
+                      navigate('/success');
                     }, 300);
                   }}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  className="w-full px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-200"
                 >
-                  View Orders
+                  View Success Page
                 </button>
-                <button
-                  onClick={() => setShowReferralModal(false)}
-                  className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200"
-                >
-                  Continue Shopping
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setShowReferralModal(false);
+                      setTimeout(() => {
+                        navigate('/orders');
+                      }, 300);
+                    }}
+                    className="flex-1 px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    View Orders
+                  </button>
+                  <button
+                    onClick={() => setShowReferralModal(false)}
+                    className="flex-1 px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200"
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
               </div>
             </div>
           </div>
