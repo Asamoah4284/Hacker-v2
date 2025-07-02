@@ -44,7 +44,7 @@ function Button({ children, className = '', variant, size, ...props }) {
 function Card({ children, className = '' }) {
   return (
     <div
-      className={`rounded-2xl shadow-xl bg-white/10 backdrop-blur-lg border border-white/10 ${className} transition-all duration-200 hover:shadow-2xl hover:-translate-y-1`}
+      className={`rounded-2xl shadow-xl bg-white/80 dark:bg-gray-800/10 backdrop-blur-lg border border-gray-200/50 dark:border-gray-700/10 ${className} transition-all duration-200 hover:shadow-2xl hover:-translate-y-1`}
     >
       {children}
     </div>
@@ -65,7 +65,7 @@ function Badge({ children, className = '' }) {
 function Input({ className = '', ...props }) {
   return (
     <input
-      className={`w-full px-4 py-2 rounded bg-[#232326]/80 border-none text-white focus:outline-none focus:ring-2 focus:ring-[#d4845b] ${className}`}
+      className={`w-full px-4 py-2 rounded bg-gray-200/80 dark:bg-gray-700/80 border-none text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#d4845b] ${className}`}
       {...props}
     />
   );
@@ -260,7 +260,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
+    <div className='min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b] text-gray-800 dark:text-white'>
       <Navigation />
 
       {/* Hero Section */}

@@ -26,11 +26,11 @@ const team = [
 
 export default function AboutPage() {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
+    <div className='min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b] text-gray-800 dark:text-white'>
       <Navigation />
 
       {/* Hero Section */}
-      <section className='relative py-24 overflow-hidden bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b]'>
+      <section className='relative py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50 dark:from-[#18181b] dark:via-[#232326] dark:to-[#18181b]'>
         {/* Blurred Accent Shape */}
         <div className='absolute -top-32 -left-32 w-[500px] h-[500px] bg-[#d4845b] opacity-20 rounded-full blur-3xl pointer-events-none'></div>
         <div className='container mx-auto px-8 md:px-16 xl:px-32 text-center relative z-10'>
@@ -67,7 +67,7 @@ export default function AboutPage() {
             </ul>
           </div>
           {/* Team Card */}
-          <div className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-10 flex flex-col gap-8'>
+          <div className='bg-white/80 dark:bg-gray-800/10 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/10 p-10 flex flex-col gap-8'>
             <h3 className='text-2xl font-bold text-white mb-2 text-center'>
               Meet Our Team
             </h3>

@@ -199,8 +199,9 @@ export default function Marketplace() {
             Excellence
           </h1>
           <p className='text-2xl text-[#a1a1aa] max-w-2xl mx-auto mb-10'>
-            Explore handcrafted treasures from Africa's most talented entrepreneurs. 
-            Every purchase supports local communities and preserves cultural heritage.
+            Explore handcrafted treasures from Africa's most talented
+            entrepreneurs. Every purchase supports local communities and
+            preserves cultural heritage.
           </p>
           <div className='flex flex-col sm:flex-row gap-4 justify-center items-center'>
             <form onSubmit={handleSearch} className='relative max-w-md w-full'>
@@ -245,7 +246,7 @@ export default function Marketplace() {
                 </button>
               ))}
             </div>
-            
+
             {/* Sort Options */}
             <div className='flex items-center gap-4'>
               <span className='text-[#a1a1aa] font-medium'>Sort by:</span>
@@ -390,44 +391,60 @@ export default function Marketplace() {
       <section className='py-20 bg-white/5'>
         <div className='container mx-auto px-8 md:px-16 xl:px-32'>
           <div className='text-center mb-16'>
-            <h2 className='text-4xl font-bold text-white mb-4'>Featured Sellers</h2>
+            <h2 className='text-4xl font-bold text-white mb-4'>
+              Featured Sellers
+            </h2>
             <p className='text-xl text-[#a1a1aa] max-w-2xl mx-auto'>
               Meet the talented entrepreneurs behind these amazing products
             </p>
           </div>
-          
+
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
             {[
               { name: 'David Mwangi', location: 'Nairobi, Kenya', products: 2, rating: 4.9, specialty: 'Jewelry Making' },
               { name: 'Fatima Benali', location: 'Fez, Morocco', products: 2, rating: 4.8, specialty: 'Ceramic Pottery' },
               { name: 'Kwame Asante', location: 'Kumasi, Ghana', products: 2, rating: 4.7, specialty: 'Wood Carving' }
             ].map((seller, i) => (
-              <div key={i} className='bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'>
+              <div
+                key={i}
+                className='bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'
+              >
                 <div className='flex items-center gap-4 mb-6'>
                   <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419]'>
-                    {seller.name.split(' ').map(n => n[0]).join('')}
+                    {seller.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')}
                   </div>
                   <div>
-                    <h3 className='font-bold text-xl text-white'>{seller.name}</h3>
+                    <h3 className='font-bold text-xl text-white'>
+                      {seller.name}
+                    </h3>
                     <p className='text-[#a1a1aa]'>{seller.location}</p>
                   </div>
                 </div>
-                
+
                 <div className='space-y-3 mb-6'>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Products:</span>
-                    <span className='text-white font-semibold'>{seller.products}</span>
+                    <span className='text-white font-semibold'>
+                      {seller.products}
+                    </span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Rating:</span>
-                    <span className='text-white font-semibold'>{seller.rating} ⭐</span>
+                    <span className='text-white font-semibold'>
+                      {seller.rating} ⭐
+                    </span>
                   </div>
                   <div className='flex justify-between'>
                     <span className='text-[#a1a1aa]'>Specialty:</span>
-                    <span className='text-[#d4845b] font-semibold'>{seller.specialty}</span>
+                    <span className='text-[#d4845b] font-semibold'>
+                      {seller.specialty}
+                    </span>
                   </div>
                 </div>
-                
+
                 <button className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'>
                   View Shop
                 </button>
