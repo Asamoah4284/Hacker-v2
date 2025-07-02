@@ -34,7 +34,7 @@ function App() {
         />
 
         <Route
-          path='/entrepreneur/:id/dashboard'
+          path='/entrepreneur/:id'
           element={
             <ProtectedRoute>
               <EntrepreneurDashboard />
