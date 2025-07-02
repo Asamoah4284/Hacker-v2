@@ -378,35 +378,12 @@ export default function HomePage() {
                 className='relative flex flex-col bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-0 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
                 style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
               >
-                {/* Product Image Placeholder with Heart Icon */}
+                {/* Product Image Placeholder with Badge */}
                 <div className='relative h-40 w-full flex items-center justify-center rounded-t-2xl bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] mb-0'>
                   <span className='absolute top-3 left-3 z-10'>
                     <span className='px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
                       {product.badge}
                     </span>
-                  </span>
-                  <span className='absolute top-3 right-3 z-10'>
-                    <button className='w-8 h-8 flex items-center justify-center rounded-full bg-white/70 hover:bg-[#d4845b]/80 transition-colors shadow'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth={1.5}
-                        stroke='#d4845b'
-                        className='w-5 h-5'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M16.5 3.75a4.5 4.5 0 00-3.57 7.28l.07.08.07-.08a4.5 4.5 0 013.57-7.28z'
-                        />
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A6.5 6.5 0 0112 2a6.5 6.5 0 0110 6.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
-                        />
-                      </svg>
-                    </button>
                   </span>
                   {/* Placeholder for product image */}
                   <span className='w-20 h-20 rounded-xl bg-white/30 flex items-center justify-center text-3xl text-[#d4845b] font-bold shadow'>

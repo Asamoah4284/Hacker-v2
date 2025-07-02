@@ -3,10 +3,13 @@ import Home from './Pages/Home';
 import AboutPage from './Pages/AboutPage';
 import EntrepreneurPage from './Pages/Entrepreneur';
 import SignupPage from './Pages/Signup';
-import './index.css'
+import './index.css';
 import Marketplace from './Pages/Marketplace';
 import Dashboard from './Pages/Dashboard';
 import LoginPage from './Pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
+import OrdersPage from './Pages/Orders';
+import CartsPage from './Pages/Carts';
 
 function App() {
   return (
@@ -18,17 +21,56 @@ function App() {
         <Route path='/about' element={<AboutPage />} />
 
         {/* Entrepreneur Route */}
-        <Route path='/entrepreneur' element={<EntrepreneurPage />} />
+        <Route
+          path='/entrepreneur'
+          element={
+            <ProtectedRoute>
+              <EntrepreneurPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Signup Route */}
         <Route path='/signup' element={<SignupPage />} />
 
         {/* Marketplace Route */}
-        <Route path='/marketplace' element={<Marketplace />} />
+        <Route
+          path='/marketplace'
+          element={
+            <ProtectedRoute>
+              <Marketplace />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path='/login' element={<LoginPage />} />
 
-        <Route path='/dashboard' element={<Dashboard />} />
+        <Route
+          path='/dashboard'
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path='/orders'
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path='/cart'
+          element={
+            <ProtectedRoute>
+              <CartsPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
