@@ -1,6 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+function useCartCount() {
+  const [cartCount, setCartCount] = useState(() => {
+    try {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    } catch {
+      return 0;
+    }
+  });
+
+  useEffect(() => {
+    function handleStorage() {
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCartCount(cart.reduce((sum, item) => sum + (item.quantity || 1), 0));
+      } catch {
+        setCartCount(0);
+      }
+    }
+    window.addEventListener('storage', handleStorage);
+    const interval = setInterval(handleStorage, 500);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+    };
+  }, []);
+
+  return cartCount;
+}
+
 export default function Navigation() {
   const navigate = useNavigate();
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -10,6 +40,7 @@ export default function Navigation() {
   });
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
+  const cartCount = useCartCount();
 
   // Check if user is logged in
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -130,9 +161,11 @@ export default function Navigation() {
                 <circle cx='20' cy='21' r='1' />
                 <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6' />
               </svg>
-              <span className='absolute -top-1 -right-1 w-4 h-4 bg-[#d4845b] text-white text-xs font-bold rounded-full flex items-center justify-center shadow'>
-                1
-              </span>
+              {cartCount > 0 && (
+                <span className='absolute -top-1 -right-1 w-4 h-4 bg-[#d4845b] text-white text-xs font-bold rounded-full flex items-center justify-center shadow'>
+                  {cartCount}
+                </span>
+              )}
             </Link>
             {/* User Avatar Dropdown */}
             <div className='relative' ref={menuRef}>

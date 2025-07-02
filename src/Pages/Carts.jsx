@@ -1,28 +1,50 @@
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import { useState } from 'react';
-
-const initialCart = [
-  {
-    id: 'P-1001',
-    name: 'Handwoven Kente Scarf',
-    price: 89.0,
-    quantity: 2,
-    image: '',
-    seller: 'Amara Okafor',
-  },
-  {
-    id: 'P-1002',
-    name: 'Carved Wooden Mask',
-    price: 145.0,
-    quantity: 1,
-    image: '',
-    seller: 'Kwame Asante',
-  },
-];
+import { useState, useEffect, useRef } from 'react';
 
 export default function CartsPage() {
-  const [cart, setCart] = useState(initialCart);
+  const [cart, setCart] = useState([]);
+  const didLoad = useRef(false);
+
+  // Function to load cart from localStorage
+  const loadCart = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('cart')) || [];
+      setCart(stored);
+      console.log('Loaded cart from localStorage:', stored);
+    } catch {
+      setCart([]);
+      console.log('Failed to load cart from localStorage');
+    }
+  };
+
+  // Load cart on mount and when storage changes or tab becomes visible
+  useEffect(() => {
+    loadCart();
+    function handleStorage() {
+      loadCart();
+    }
+    function handleVisibility() {
+      if (document.visibilityState === 'visible') {
+        loadCart();
+      }
+    }
+    window.addEventListener('storage', handleStorage);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
+  // Only update localStorage after initial load
+  useEffect(() => {
+    if (didLoad.current) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+      didLoad.current = true;
+    }
+  }, [cart]);
 
   const updateQuantity = (id, delta) => {
     setCart((prev) =>
