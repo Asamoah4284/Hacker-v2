@@ -18,9 +18,9 @@ export default function Footer() {
                   filter: 'saturate(1.5) brightness(1.2) contrast(1.1)'
                 }}
               />
-              {/* Gradient overlay */}
+              {/* Gradient overlay - Clay terracotta to light peach */}
               <div 
-                className='absolute inset-0 h-16 w-auto bg-gradient-to-r from-[#d4845b] via-[#f1c3b5] to-[#d4845b] rounded-lg opacity-60 mix-blend-color'
+                className='absolute inset-0 h-16 w-auto bg-gradient-to-r from-[#d7906e] to-[#e9b19b] rounded-lg opacity-70 mix-blend-color'
                 style={{
                   maskImage: `url(${kolaLogo})`,
                   maskSize: 'contain',
