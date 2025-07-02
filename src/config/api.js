@@ -15,9 +15,9 @@ export const API_ENDPOINTS = {
 export const apiService = {
   // fetch all orders
 
-  async getOrders() {
+  async getOrders(userId) {
     try {
-      const response = await fetch(API_ENDPOINTS.ORDERS);
+      const response = await fetch(`${API_ENDPOINTS.ORDERS}?userId=${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

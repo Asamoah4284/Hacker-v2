@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
-import kolaLogo from '../assets/images/logo/kola-logo.png';
+import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -135,21 +135,11 @@ export default function SignupPage() {
             {/* Logo */}
             <div className='text-center mb-8'>
               <div className='flex items-center justify-center mb-4'>
-                <div className='relative h-16 w-auto overflow-hidden'>
-                  {/* Base logo with terracotta filter */}
-                  <img
-                    src={kolaLogo}
-                    alt='Kola Logo'
-                    className='h-16 w-auto object-contain relative z-10'
-                    style={{
-                      filter: 'sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.2) contrast(1.1)',
-                    }}
-                  />
-                  {/* Gradient overlay for left-to-right transition */}
-                  <div 
-                    className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-80 mix-blend-multiply pointer-events-none'
-                  ></div>
-                </div>
+                <img
+                  src={kolaLogo}
+                  alt='Kola Logo'
+                  className='h-16 w-auto object-contain'
+                />
               </div>
               <h1 className='text-2xl font-bold text-white mb-2'>
                 Join Our Community
