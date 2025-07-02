@@ -152,7 +152,7 @@ export default function EntrepreneurPage() {
               and craftsmanship to the world stage.
             </p>
           </div>
-
+          
           {loading ? (
             <div className='text-center py-20'>
               <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4845b]'></div>
@@ -170,7 +170,7 @@ export default function EntrepreneurPage() {
             </div>
           ) : (
             <>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
                 {filteredArtisans.map((artisan) => {
                   const transformedArtisan = transformArtisan(artisan);
                   return (
@@ -178,52 +178,52 @@ export default function EntrepreneurPage() {
                       key={artisan.id}
                       className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105'
                     >
-                      {/* Avatar */}
-                      <div className='flex items-center gap-4 mb-6'>
+                {/* Avatar */}
+                <div className='flex items-center gap-4 mb-6'>
                         <div className='w-16 h-16 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-2xl font-bold text-[#7a3419] shadow overflow-hidden'>
                           {artisan.imageUrl ? (
                             <img
                               src={artisan.imageUrl}
                               alt={artisan.name}
                               className='w-full h-full object-cover'
-                            />
-                          ) : (
+                      />
+                    ) : (
                             artisan.name
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')
-                          )}
-                        </div>
-                        <div>
-                          <div className='font-bold text-lg text-white'>
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                    )}
+                  </div>
+                  <div>
+                    <div className='font-bold text-lg text-white'>
                             {artisan.name}
-                          </div>
-                          <div className='text-[#d4845b] font-semibold text-sm'>
+                    </div>
+                    <div className='text-[#d4845b] font-semibold text-sm'>
                             {transformedArtisan.business}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Business Info */}
-                      <div className='space-y-3 mb-6'>
-                        <div className='flex items-center gap-2'>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Business Info */}
+                <div className='space-y-3 mb-6'>
+                  <div className='flex items-center gap-2'>
                           <span className='text-[#a1a1aa] text-sm'>
                             Specialty:
                           </span>
                           <span className='text-white font-medium'>
                             {artisan.specialty}
                           </span>
-                        </div>
-                        <div className='flex items-center gap-2'>
+                  </div>
+                  <div className='flex items-center gap-2'>
                           <span className='text-[#a1a1aa] text-sm'>
                             Location:
                           </span>
                           <span className='text-white font-medium'>
                             {artisan.location}
                           </span>
-                        </div>
-                        <div className='flex items-center gap-4'>
-                          <div className='flex items-center gap-1'>
+                  </div>
+                  <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-1'>
                             <span className='text-[#a1a1aa] text-sm'>
                               Rating:
                             </span>
@@ -235,22 +235,22 @@ export default function EntrepreneurPage() {
                               fill='currentColor'
                               viewBox='0 0 20 20'
                             >
-                              <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
-                            </svg>
-                          </div>
-                          <div className='flex items-center gap-1'>
+                        <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
+                      </svg>
+                    </div>
+                    <div className='flex items-center gap-1'>
                             <span className='text-[#a1a1aa] text-sm'>
                               Products:
                             </span>
                             <span className='text-white font-bold'>
                               {artisan.productCount}
                             </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bio */}
-                      <p className='text-[#a1a1aa] text-sm mb-6 leading-relaxed'>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Bio */}
+                <p className='text-[#a1a1aa] text-sm mb-6 leading-relaxed'>
                         {artisan.story}
                       </p>
 
@@ -279,12 +279,12 @@ export default function EntrepreneurPage() {
                           </div>
                         </div>
                       )}
-
-                      {/* Action Button */}
-                      <button className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'>
-                        View Products
-                      </button>
-                    </div>
+                
+                {/* Action Button */}
+                <button className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'>
+                  View Products
+                </button>
+              </div>
                   );
                 })}
               </div>
@@ -303,7 +303,7 @@ export default function EntrepreneurPage() {
                   >
                     Clear Filters
                   </button>
-                </div>
+          </div>
               )}
             </>
           )}

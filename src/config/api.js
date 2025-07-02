@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   ARTISANS: `${API_BASE_URL}/public/artisans`,
   LOGIN: `${API_BASE_URL}/auth/login`,
   REGISTER: `${API_BASE_URL}/auth/register`,
+  DASHBOARD: `${API_BASE_URL}/app/dashboard`,
 };
 
 // API Functions
@@ -118,6 +119,30 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error during registration:', error);
+      throw error;
+    }
+  },
+
+  // Fetch dashboard data
+  async getDashboardData(token) {
+    try {
+      const response = await fetch(API_ENDPOINTS.DASHBOARD, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
       throw error;
     }
   }
