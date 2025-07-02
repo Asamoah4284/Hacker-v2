@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
+import Navigation from '../components/Navigation';
 
 // Default empty data structure for dashboard
 const defaultData = {
