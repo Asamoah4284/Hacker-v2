@@ -22,6 +22,7 @@ export default function Marketplace() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [addToCartMsg, setAddToCartMsg] = useState('');
 
   // Fetch products from API
   useEffect(() => {
@@ -100,6 +101,28 @@ export default function Marketplace() {
     stockQuantity: product.stockQuantity,
     isAvailable: product.isAvailable,
   });
+
+  // Add to cart handler
+  const handleAddToCart = (product) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const idx = cart.findIndex((item) => item.id === product.id);
+    if (idx > -1) {
+      cart[idx].quantity = (cart[idx].quantity || 1) + 1;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: product.imageUrl,
+        seller: product.artisan?.name || 'Unknown Artisan',
+      });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+    setAddToCartMsg(`${product.name} added to cart!`);
+    setTimeout(() => setAddToCartMsg(''), 1500);
+    window.dispatchEvent(new Event('storage'));
+  };
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
@@ -293,14 +316,17 @@ export default function Marketplace() {
                                     100
                                 )}% OFF`
                               : ''}
-                    </span>
-                  </div>
-                  
-                  <button className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'>
-                    Add to Cart
-                  </button>
-                </div>
-              </div>
+                          </span>
+                        </div>
+
+                        <button
+                          className='w-full py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'
+                          onClick={() => handleAddToCart(transformedProduct)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
                   );
                 })}
           </div>
@@ -413,6 +439,13 @@ export default function Marketplace() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Show add to cart message */}
+      {addToCartMsg && (
+        <div className='fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-[#d4845b] text-white px-6 py-3 rounded-xl shadow-lg animate-fade-in-up'>
+          {addToCartMsg}
+        </div>
+      )}
     </div>
   );
 }
