@@ -18,6 +18,11 @@ import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
+// Import local hero images
+import hero1 from '../assets/images/hero/hero-1.webp';
+import hero2 from '../assets/images/hero/hero-2.webp';
+import hero3 from '../assets/images/hero/hero-3.webp';
+
 // Local UI components
 function Button({ children, className = '', variant, size, ...props }) {
   let base =
@@ -77,21 +82,21 @@ function Input({ className = '', ...props }) {
 const heroImages = [
   {
     id: 1,
-    src: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    src: hero1,
     alt: 'African woman entrepreneur working on traditional textiles',
     name: 'Kofi Pottery',
     location: 'Kumasi, Ghana',
   },
   {
     id: 2,
-    src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2066&q=80',
+    src: hero2,
     alt: 'African craftsman creating beautiful wooden sculptures',
     name: 'Kwame Woodcraft',
     location: 'Accra, Ghana',
   },
   {
     id: 3,
-    src: 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
+    src: hero3,
     alt: 'African fashion designer showcasing traditional patterns',
     name: 'Zara Fashion House',
     location: 'Cape Town, South Africa',
