@@ -12,6 +12,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
@@ -134,49 +135,6 @@ const stats = [
   },
 ];
 
-const featuredProducts = [
-  {
-    badge: 'Bestseller',
-    name: 'Handwoven Kente Scarf',
-    seller: 'Amara Okafor',
-    rating: 4.5,
-    reviews: 156,
-    price: 89,
-    oldPrice: 120,
-    btn: 'View',
-  },
-  {
-    badge: 'Handmade',
-    name: 'Carved Wooden Mask',
-    seller: 'Kwame Asante',
-    rating: 4.8,
-    reviews: 89,
-    price: 145,
-    oldPrice: null,
-    btn: 'View',
-  },
-  {
-    badge: 'Natural',
-    name: 'Argan Oil Hair Treatment',
-    seller: 'Fatima Al-Rashid',
-    rating: 4.9,
-    reviews: 234,
-    price: 34,
-    oldPrice: 45,
-    btn: 'View',
-  },
-  {
-    badge: 'Limited',
-    name: 'Beaded Jewelry Set',
-    seller: 'Amara Okafor',
-    rating: 4.7,
-    reviews: 78,
-    price: 67,
-    oldPrice: null,
-    btn: 'View',
-  },
-];
-
 const entrepreneurs = [
   {
     name: 'Amara Okafor',
@@ -251,6 +209,45 @@ const platformFeatures = [
 
 export default function HomePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch featured products from API
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getProducts();
+        // Take first 4 products as featured
+        const products = data.products || [];
+        const featured = products.slice(0, 4).map(product => ({
+          badge: product.stockQuantity < 10 ? 'Limited' : 
+                 product.stockQuantity < 20 ? 'Popular' : 'Featured',
+          name: product.name,
+          seller: product.artisan?.name || 'Unknown Artisan',
+          rating: 4.5 + Math.random() * 0.5, // Generate random rating between 4.5-5.0
+          reviews: Math.floor(Math.random() * 200) + 50, // Random reviews between 50-250
+          price: product.price,
+          oldPrice: product.price * 1.2, // Add 20% markup for display
+          btn: 'View',
+          imageUrl: product.imageUrl,
+          id: product.id
+        }));
+        setFeaturedProducts(featured);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch featured products');
+        console.error('Error fetching featured products:', err);
+        // Fallback to empty array
+        setFeaturedProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -371,67 +368,91 @@ export default function HomePage() {
           <p className='text-xl text-[#a1a1aa] text-center mb-12'>
             Discover handpicked products from our most talented entrepreneurs
           </p>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12'>
-            {featuredProducts.map((product, i) => (
-              <div
-                key={i}
-                className='relative flex flex-col bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-0 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
-                style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
+          {loading ? (
+            <div className='text-center py-20'>
+              <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4845b]'></div>
+              <p className='text-[#a1a1aa] mt-4'>Loading featured products...</p>
+            </div>
+          ) : error ? (
+            <div className='text-center py-20'>
+              <p className='text-red-400 mb-4'>{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className='px-6 py-3 bg-[#d4845b] text-white rounded-xl hover:bg-[#b8734a] transition-colors'
               >
-                {/* Product Image Placeholder with Badge */}
-                <div className='relative h-40 w-full flex items-center justify-center rounded-t-2xl bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] mb-0'>
-                  <span className='absolute top-3 left-3 z-10'>
-                    <span className='px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
-                      {product.badge}
+                Try Again
+              </button>
+            </div>
+          ) : (
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12'>
+              {featuredProducts.map((product, i) => (
+                <div
+                  key={product.id || i}
+                  className='relative flex flex-col bg-white/10 backdrop-blur-lg rounded-2xl shadow-lg border border-white/10 p-0 transition-all duration-300 hover:shadow-2xl hover:scale-105 animate-fade-in-up'
+                  style={{ animationDelay: `${i * 0.14 + 0.1}s` }}
+                >
+                  {/* Product Image with Badge */}
+                  <div className='relative h-40 w-full flex items-center justify-center rounded-t-2xl bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] mb-0 overflow-hidden'>
+                    <span className='absolute top-3 left-3 z-10'>
+                      <span className='px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419] shadow'>
+                        {product.badge}
+                      </span>
                     </span>
-                  </span>
-                  {/* Placeholder for product image */}
-                  <span className='w-20 h-20 rounded-xl bg-white/30 flex items-center justify-center text-3xl text-[#d4845b] font-bold shadow'>
-                    <svg
-                      className='w-10 h-10 opacity-30'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      viewBox='0 0 24 24'
-                    >
-                      <rect x='4' y='4' width='16' height='16' rx='4' />
-                    </svg>
-                  </span>
-                </div>
-                {/* Divider */}
-                <div className='w-full h-px bg-white/10 my-0'></div>
-                {/* Product Details */}
-                <div className='flex flex-col flex-1 p-6'>
-                  <h3 className='text-xl font-extrabold mb-1 text-white'>
-                    {product.name}
-                  </h3>
-                  <p className='text-sm text-[#a1a1aa] mb-2'>
-                    by {product.seller}
-                  </p>
-                  <div className='flex items-center text-sm mb-2'>
-                    <Star className='h-5 w-5 text-yellow-400 mr-1' />
-                    <span>{product.rating}</span>
-                    <span className='ml-1 text-[#a1a1aa]'>
-                      ({product.reviews})
-                    </span>
-                  </div>
-                  <div className='flex items-end gap-2 mb-4'>
-                    <span className='text-2xl font-bold text-white'>
-                      ${product.price}
-                    </span>
-                    {product.oldPrice && (
-                      <span className='text-base line-through text-[#a1a1aa]'>
-                        ${product.oldPrice}
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className='w-full h-full object-cover'
+                      />
+                    ) : (
+                      <span className='w-20 h-20 rounded-xl bg-white/30 flex items-center justify-center text-3xl text-[#d4845b] font-bold shadow'>
+                        <svg
+                          className='w-10 h-10 opacity-30'
+                          fill='none'
+                          stroke='currentColor'
+                          strokeWidth='2'
+                          viewBox='0 0 24 24'
+                        >
+                          <rect x='4' y='4' width='16' height='16' rx='4' />
+                        </svg>
                       </span>
                     )}
                   </div>
-                  <Button className='mt-auto w-full' size='sm'>
-                    {product.btn}
-                  </Button>
+                  {/* Divider */}
+                  <div className='w-full h-px bg-white/10 my-0'></div>
+                  {/* Product Details */}
+                  <div className='flex flex-col flex-1 p-6'>
+                    <h3 className='text-xl font-extrabold mb-1 text-white'>
+                      {product.name}
+                    </h3>
+                    <p className='text-sm text-[#a1a1aa] mb-2'>
+                      by {product.seller}
+                    </p>
+                    <div className='flex items-center text-sm mb-2'>
+                      <Star className='h-5 w-5 text-yellow-400 mr-1' />
+                      <span>{product.rating}</span>
+                      <span className='ml-1 text-[#a1a1aa]'>
+                        ({product.reviews})
+                      </span>
+                    </div>
+                    <div className='flex items-end gap-2 mb-4'>
+                      <span className='text-2xl font-bold text-white'>
+                        ${product.price}
+                      </span>
+                      {product.oldPrice && (
+                        <span className='text-base line-through text-[#a1a1aa]'>
+                          ${product.oldPrice}
+                        </span>
+                      )}
+                    </div>
+                    <Button className='mt-auto w-full' size='sm'>
+                      {product.btn}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           <div className='flex justify-center mt-12'>
             <Button
               variant='outline'
