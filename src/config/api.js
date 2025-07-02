@@ -30,7 +30,9 @@ export const apiService = {
   // Fetch products with pagination
   async getProductsWithPagination(page = 1, limit = 10) {
     try {
-      const response = await fetch(`${API_ENDPOINTS.PRODUCTS}?page=${page}&limit=${limit}`);
+      const response = await fetch(
+        `${API_ENDPOINTS.PRODUCTS}?page=${page}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -60,7 +62,9 @@ export const apiService = {
   // Fetch artisans with pagination
   async getArtisansWithPagination(page = 1, limit = 10) {
     try {
-      const response = await fetch(`${API_ENDPOINTS.ARTISANS}?page=${page}&limit=${limit}`);
+      const response = await fetch(
+        `${API_ENDPOINTS.ARTISANS}?page=${page}&limit=${limit}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -68,6 +72,21 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error fetching artisans with pagination:', error);
+      throw error;
+    }
+  },
+
+  // Fetch a single artisan by ID
+  async getArtisanById(id) {
+    try {
+      const response = await fetch(`${API_ENDPOINTS.ARTISANS}/${id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching artisan by ID:', error);
       throw error;
     }
   },
@@ -88,7 +107,9 @@ export const apiService = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       const data = await response.json();
@@ -112,7 +133,9 @@ export const apiService = {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       const data = await response.json();
@@ -130,13 +153,15 @@ export const apiService = {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
       }
 
       const data = await response.json();
@@ -145,7 +170,7 @@ export const apiService = {
       console.error('Error fetching dashboard data:', error);
       throw error;
     }
-  }
+  },
 };
 
-export default apiService; 
+export default apiService;

@@ -76,7 +76,7 @@ export default function EntrepreneurPage() {
   });
 
   const handleViewProducts = (entrepreneur) => {
-    navigate(`/entrepreneur/${entrepreneur.id}/dashboard`);
+    navigate(`/entrepreneur/${entrepreneur.id}`);
   };
 
   const handleCloseDashboard = () => {
@@ -293,15 +293,15 @@ export default function EntrepreneurPage() {
                           </div>
                         </div>
                       )}
-                
-                {/* Action Button */}
-                <button 
-                  className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'
-                  onClick={() => handleViewProducts(artisan)}
-                >
-                  View Products
-                </button>
-              </div>
+
+                      {/* Action Button */}
+                      <button
+                        className='w-full bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold py-3 px-6 rounded-xl hover:from-[#c4734a] hover:to-[#e8b8a8] transition-all duration-300 shadow-lg hover:shadow-xl'
+                        onClick={() => handleViewProducts(artisan)}
+                      >
+                        View Profile
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -349,9 +349,9 @@ export default function EntrepreneurPage() {
       </section>
 
       {showDashboard && selectedEntrepreneur && (
-        <EntrepreneurDashboard 
-          entrepreneur={selectedEntrepreneur} 
-          onClose={handleCloseDashboard} 
+        <EntrepreneurDashboard
+          entrepreneur={selectedEntrepreneur}
+          onClose={handleCloseDashboard}
         />
       )}
 
