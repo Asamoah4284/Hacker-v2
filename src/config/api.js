@@ -188,6 +188,42 @@ export const apiService = {
       throw error;
     }
   },
+
+  // Create referral link
+  async createReferralLink(token, refereeEmail, artisanId) {
+    try {
+      console.log('Creating referral link with:', { refereeEmail, artisanId });
+      
+      const response = await fetch(API_ENDPOINTS.REFERRALS, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          refereeEmail,
+          artisanId,
+        }),
+      });
+
+      console.log('Referral API response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Referral API error response:', errorData);
+        throw new Error(
+          `Referral creation failed: ${response.status} - ${errorData}`
+        );
+      }
+
+      const data = await response.json();
+      console.log('Referral created successfully:', data);
+      return data;
+    } catch (error) {
+      console.error('Error creating referral link:', error);
+      throw error;
+    }
+  },
 };
 
 export default apiService;

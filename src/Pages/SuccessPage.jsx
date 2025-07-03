@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { motion } from 'framer-motion';
+import { apiService } from '../config/api';
 import { 
   CheckCircle, 
   Gift, 
@@ -22,13 +23,16 @@ export default function SuccessPage() {
   const [copied, setCopied] = useState(false);
   const [showReferralSection, setShowReferralSection] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
+  const [referralError, setReferralError] = useState('');
+  const [isGeneratingReferral, setIsGeneratingReferral] = useState(false);
 
   // Debug logging to check for undefined variables
   console.log('SuccessPage component state:', {
     referralLink,
     copied,
     showReferralSection,
-    orderDetails
+    orderDetails,
+    referralError
   });
 
   // Get order details from location state or localStorage
@@ -38,46 +42,79 @@ export default function SuccessPage() {
     setOrderDetails(orderData);
     
     // Generate referral link on component mount
-    const link = generateReferralLink();
-    setReferralLink(link);
+    generateReferralLinkFromBackend();
   }, [location.state]);
 
-  // Function to generate referral link
-  const generateReferralLink = () => {
-    console.log('Generating referral link for success page...');
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    console.log('User data from localStorage:', userData);
-    
-    // Try multiple sources for user data
-    let userId = userData?.id || userData?._id;
-    if (!userId) {
-      try {
-        const user = JSON.parse(localStorage.getItem('user')) || JSON.parse(localStorage.getItem('currentUser'));
-        userId = user?.id || user?._id || user?.userId;
-      } catch (error) {
-        console.log('Error parsing user data from alternative sources:', error);
+  // Function to generate referral link from backend
+  const generateReferralLinkFromBackend = async () => {
+    try {
+      setIsGeneratingReferral(true);
+      setReferralError('');
+      console.log('Generating referral link from backend for success page...');
+      
+      // Get user data and token
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const token = localStorage.getItem('authToken');
+      
+      console.log('User data from localStorage:', userData);
+      console.log('Auth token available:', !!token);
+      
+      if (!token) {
+        console.error('No auth token found');
+        setReferralError('Authentication required. Please log in again.');
+        return;
       }
+      
+      if (!userData?.email) {
+        console.error('No user email found in userData');
+        setReferralError('User email not found. Please log in again.');
+        return;
+      }
+      
+      // Get artisan ID from order details or use a default
+      let artisanId = orderDetails?.artisanId || orderDetails?.items?.[0]?.artisanId;
+      
+      if (!artisanId) {
+        console.log('No artisan ID found in order details, using default');
+        artisanId = '68625f709729ffdfa0f7242d'; // Default artisan ID as fallback
+      }
+      
+      console.log('Calling backend referral API with:', {
+        refereeEmail: userData.email,
+        artisanId: artisanId
+      });
+      
+      // Call backend API
+      const referralData = await apiService.createReferralLink(
+        token,
+        userData.email,
+        artisanId
+      );
+      
+      console.log('Backend referral response:', referralData);
+      
+      // Extract referral link from response
+      const generatedLink = referralData.referralLink || referralData.link || referralData.url;
+      
+      if (!generatedLink) {
+        console.error('No referral link in backend response:', referralData);
+        setReferralError('Backend did not return a valid referral link.');
+        return;
+      }
+      
+      console.log('Successfully generated referral link:', generatedLink);
+      setReferralLink(generatedLink);
+      
+      // Store referral data in localStorage
+      localStorage.setItem('referralCode', generatedLink);
+      localStorage.setItem('referralLink', generatedLink);
+      
+    } catch (error) {
+      console.error('Error generating referral link from backend:', error);
+      setReferralError(`Failed to generate referral link: ${error.message}`);
+    } finally {
+      setIsGeneratingReferral(false);
     }
-    
-    // Fallback to anonymous if no user data found
-    if (!userId) {
-      userId = 'anonymous';
-      console.log('No user data found, using anonymous');
-    }
-    
-    console.log('Using userId:', userId);
-    
-    const baseUrl = window.location.origin;
-    const referralCode = `${userId}_${Date.now()}`;
-    const link = `${baseUrl}/?ref=${referralCode}`;
-    
-    console.log('Generated referral link:', link);
-    
-    // Store referral data in localStorage
-    localStorage.setItem('referralCode', referralCode);
-    localStorage.setItem('referralLink', link);
-    
-    return link;
   };
 
   // Function to copy referral link to clipboard
@@ -258,33 +295,71 @@ export default function SuccessPage() {
                   Your Referral Link
                 </h3>
                 
-                <div className='bg-white/10 rounded-lg p-4 mb-4'>
-                  <div className='flex items-center gap-3'>
-                    <input
-                      type='text'
-                      value={referralLink}
-                      readOnly
-                      className='flex-1 bg-transparent text-white placeholder-white/70 outline-none text-sm md:text-base'
-                      placeholder='Generating referral link...'
-                    />
+                {referralError ? (
+                  <div className='bg-red-500/20 border border-red-300/30 rounded-lg p-4 mb-4'>
+                    <div className='flex items-center gap-2 text-red-200 mb-2'>
+                      <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
+                      </svg>
+                      <span className='font-semibold'>Referral Link Error</span>
+                    </div>
+                    <p className='text-red-200 text-sm mb-3'>{referralError}</p>
                     <button
-                      onClick={copyReferralLink}
-                      className='px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition-colors flex items-center gap-2'
+                      onClick={generateReferralLinkFromBackend}
+                      disabled={isGeneratingReferral}
+                      className='px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50'
                     >
-                      {copied ? (
+                      {isGeneratingReferral ? (
                         <>
-                          <CheckCircle className='w-4 h-4' />
-                          Copied!
+                          <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>
+                            <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                            <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                          </svg>
+                          Retrying...
                         </>
                       ) : (
-                        <>
-                          <Copy className='w-4 h-4' />
-                          Copy
-                        </>
+                        'Retry'
                       )}
                     </button>
                   </div>
-                </div>
+                ) : (
+                  <div className='bg-white/10 rounded-lg p-4 mb-4'>
+                    <div className='flex items-center gap-3'>
+                      <input
+                        type='text'
+                        value={isGeneratingReferral ? 'Generating referral link...' : referralLink}
+                        readOnly
+                        className='flex-1 bg-transparent text-white placeholder-white/70 outline-none text-sm md:text-base'
+                        placeholder='Generating referral link...'
+                      />
+                      <button
+                        onClick={copyReferralLink}
+                        disabled={isGeneratingReferral || !referralLink}
+                        className='px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
+                      >
+                        {isGeneratingReferral ? (
+                          <>
+                            <svg className='w-4 h-4 animate-spin' fill='none' viewBox='0 0 24 24'>
+                              <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                              <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                            </svg>
+                            Generating...
+                          </>
+                        ) : copied ? (
+                          <>
+                            <CheckCircle className='w-4 h-4' />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className='w-4 h-4' />
+                            Copy
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 
                 <p className='text-white/80 text-sm'>
                   Share this link with friends and earn rewards when they join our community!
