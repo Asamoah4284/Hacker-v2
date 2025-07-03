@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/auth/register`,
   DASHBOARD: `${API_BASE_URL}/app/dashboard`,
   ORDERS: `${API_BASE_URL}/app/orders`,
+  USERS: `${API_BASE_URL}/public/users`,
 };
 
 // API Functions
@@ -57,6 +58,21 @@ export const apiService = {
       return data;
     } catch (error) {
       console.error('Error fetching products with pagination:', error);
+      throw error;
+    }
+  },
+
+  // Fetch all users
+  async getUsers() {
+    try {
+      const response = await fetch(API_ENDPOINTS.USERS);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching users:', error);
       throw error;
     }
   },
@@ -150,12 +166,14 @@ export const apiService = {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.log('Signup Error Data:', errorData);
         throw new Error(
-          errorData.message || `HTTP error! status: ${response.status}`
+          errorData.error || `HTTP error! status: ${response.status}`
         );
       }
 
       const data = await response.json();
+      console.log('Signup Response:', data);
       return data;
     } catch (error) {
       console.error('Error during registration:', error);

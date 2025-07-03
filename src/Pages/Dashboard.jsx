@@ -25,8 +25,11 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [dashboardData, setDashboardData] = useState(null);
+  const [leaderboardUsers, setLeaderboardUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,9 +38,9 @@ export default function Dashboard() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch dashboard data
+  // Fetch dashboard data and leaderboard users
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
@@ -51,18 +54,27 @@ export default function Dashboard() {
           return;
         }
 
-        const data = await apiService.getDashboardData(token);
-        setDashboardData(data);
+        // Fetch dashboard data
+        const dashboardData = await apiService.getDashboardData(token);
+        setDashboardData(dashboardData);
+
+        // Fetch all users for leaderboard
+        const usersResponse = await apiService.getUsers();
+        const usersWithPoints = usersResponse.users.filter(user => user.points >= 100);
+        
+        // Sort by points in descending order
+        const sortedUsers = usersWithPoints.sort((a, b) => b.points - a.points);
+        setLeaderboardUsers(sortedUsers);
       } catch (err) {
-        console.error('Error fetching dashboard data:', err);
+        console.error('Error fetching data:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    fetchData();
+  }, [navigate]);
 
   const formatTime = (date) => {
     return date.toLocaleTimeString('en-US', {
@@ -71,6 +83,14 @@ export default function Dashboard() {
       minute: '2-digit',
       second: '2-digit',
     });
+  };
+
+  const showToastMessage = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
   };
 
   const handleLogout = () => {
@@ -84,10 +104,6 @@ export default function Dashboard() {
   // Get user data from localStorage
   const userEmail = localStorage.getItem('userEmail');
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  
-  // Log user data for debugging
-  console.log('User Data from localStorage:', userData);
-  console.log('User Referral Code:', userData.myReferralCode);
 
   // Show loading state
   if (loading) {
@@ -126,6 +142,18 @@ export default function Dashboard() {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
+      {/* Toast Notification */}
+      {showToast && (
+        <div className='fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300'>
+          <div className='bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2'>
+            <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 13l4 4L19 7' />
+            </svg>
+            {toastMessage}
+          </div>
+        </div>
+      )}
+
       {/* Top Navigation Bar */}
       <Navigation />
 
@@ -156,14 +184,13 @@ export default function Dashboard() {
                       {userData.myReferralCode}
                     </code>
                   </div>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(userData.myReferralCode);
-                      // You could add a toast notification here
-                      alert('Referral code copied to clipboard!');
-                    }}
-                    className='px-4 py-3 bg-[#d4845b] text-white font-semibold rounded-lg hover:bg-[#b8734a] transition-colors flex items-center gap-2'
-                  >
+                                      <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(userData.myReferralCode);
+                        showToastMessage('Referral code copied to clipboard!');
+                      }}
+                      className='px-4 py-3 bg-[#d4845b] text-white font-semibold rounded-lg hover:bg-[#b8734a] transition-colors flex items-center gap-2'
+                    >
                     <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                       <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z' />
                     </svg>
@@ -418,8 +445,8 @@ export default function Dashboard() {
                 </div>
 
                 <div className='space-y-4'>
-                  {(dashboardData?.leaderboardData || []).length > 0 ? (
-                    (dashboardData?.leaderboardData || []).map((user, index) => (
+                  {leaderboardUsers.length > 0 ? (
+                    leaderboardUsers.map((user, index) => (
                       <div key={index} className={`flex items-center justify-between p-6 rounded-xl transition-all ${
                         index === 0 ? 'bg-gradient-to-r from-[#d4845b]/20 to-[#f8e1da]/10 border border-[#d4845b]/30' : 'bg-white/5 hover:bg-white/10'
                       }`}>
@@ -432,15 +459,15 @@ export default function Dashboard() {
                           }`}>
                             {index + 1}
                           </div>
-                          <div className='flex items-center gap-3'>
-                            <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
-                              {user.avatar}
+                                                      <div className='flex items-center gap-3'>
+                              <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
+                                {user.name.split(' ').map(n => n[0]).join('')}
+                              </div>
+                              <div>
+                                <p className='font-bold text-white'>{user.name}</p>
+                                <p className='text-sm text-[#a1a1aa]'>{Math.floor(user.points / 100)} referrals</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className='font-bold text-white'>{user.name}</p>
-                              <p className='text-sm text-[#a1a1aa]'>{user.referrals} referrals</p>
-                            </div>
-                          </div>
                         </div>
                         <div className='text-right'>
                           <p className='text-2xl font-bold text-[#d4845b]'>{user.points.toLocaleString()}</p>
@@ -455,8 +482,8 @@ export default function Dashboard() {
                           <path d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' />
                         </svg>
                       </div>
-                      <p className='text-[#a1a1aa] mb-2'>No leaderboard data</p>
-                      <p className='text-sm text-[#71717a]'>Community rankings will appear here</p>
+                      <p className='text-[#a1a1aa] mb-2'>No users with 100+ points yet</p>
+                      <p className='text-sm text-[#71717a]'>Start referring to see rankings</p>
                     </div>
                   )}
                 </div>

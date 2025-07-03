@@ -73,6 +73,11 @@ export default function SignupPage() {
 
       const response = await apiService.register(userData);
 
+      // Log the signup response
+      console.log('Signup Response:', response);
+      console.log('Response Type:', typeof response);
+      console.log('Response Keys:', Object.keys(response));
+
       // Store user data and token if provided
       if (response.token) {
         localStorage.setItem('token', response.token);
