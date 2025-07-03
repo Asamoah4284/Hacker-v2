@@ -61,7 +61,7 @@ export default function Dashboard() {
 
         // Fetch all users for leaderboard
         const usersResponse = await apiService.getUsers();
-        const usersWithPoints = usersResponse.users.filter
+        const usersWithPoints = usersResponse.users
         
         // Sort by points in descending order
         const sortedUsers = usersWithPoints.sort((a, b) => b.points - a.points);
