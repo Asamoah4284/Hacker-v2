@@ -359,48 +359,50 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className='space-y-4'>
-                  {leaderboardUsers.length > 0 ? (
-                    leaderboardUsers.map((user, index) => (
-                      <div key={index} className={`flex items-center justify-between p-6 rounded-xl transition-all ${
-                        index === 0 ? 'bg-gradient-to-r from-[#d4845b]/20 to-[#f8e1da]/10 border border-[#d4845b]/30' : 'bg-white/5 hover:bg-white/10'
-                      }`}>
-                        <div className='flex items-center gap-4'>
-                          <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                            index === 0 ? 'bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] text-white' :
-                            index === 1 ? 'bg-gradient-to-br from-[#9ca3af] to-[#6b7280] text-white' :
-                            index === 2 ? 'bg-gradient-to-br from-[#d97706] to-[#b45309] text-white' :
-                            'bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419]'
-                          }`}>
-                            {index + 1}
-                          </div>
-                                                      <div className='flex items-center gap-3'>
-                              <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
+                <div className='max-h-[400px] sm:max-h-[500px] md:max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#d4845b]/30 scrollbar-track-white/5 rounded-lg'>
+                  <div className='space-y-3 pr-2'>
+                    {leaderboardUsers.length > 0 ? (
+                      leaderboardUsers.map((user, index) => (
+                        <div key={index} className={`flex items-center justify-between p-4 sm:p-6 rounded-xl transition-all ${
+                          index === 0 ? 'bg-gradient-to-r from-[#d4845b]/20 to-[#f8e1da]/10 border border-[#d4845b]/30' : 'bg-white/5 hover:bg-white/10'
+                        }`}>
+                          <div className='flex items-center gap-3 sm:gap-4 min-w-0 flex-1'>
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm sm:text-lg font-bold flex-shrink-0 ${
+                              index === 0 ? 'bg-gradient-to-br from-[#fbbf24] to-[#f59e0b] text-white' :
+                              index === 1 ? 'bg-gradient-to-br from-[#9ca3af] to-[#6b7280] text-white' :
+                              index === 2 ? 'bg-gradient-to-br from-[#d97706] to-[#b45309] text-white' :
+                              'bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] text-[#7a3419]'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                              <div className='w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-xs sm:text-sm font-bold text-[#7a3419] flex-shrink-0'>
                                 {user.name.split(' ').map(n => n[0]).join('')}
                               </div>
-                              <div>
-                                <p className='font-bold text-white'>{user.name}</p>
-                                <p className='text-sm text-[#a1a1aa]'>{Math.floor(user.points / 100)} referrals</p>
+                              <div className='min-w-0 flex-1'>
+                                <p className='font-bold text-white text-sm sm:text-base truncate'>{user.name}</p>
+                                <p className='text-xs sm:text-sm text-[#a1a1aa]'>{Math.floor(user.points / 100)} referrals</p>
                               </div>
                             </div>
+                          </div>
+                          <div className='text-right flex-shrink-0 ml-2'>
+                            <p className='text-lg sm:text-2xl font-bold text-[#d4845b]'>{user.points.toLocaleString()}</p>
+                            <p className='text-xs sm:text-sm text-[#a1a1aa]'>points</p>
+                          </div>
                         </div>
-                        <div className='text-right'>
-                          <p className='text-2xl font-bold text-[#d4845b]'>{user.points.toLocaleString()}</p>
-                          <p className='text-sm text-[#a1a1aa]'>points</p>
+                      ))
+                    ) : (
+                      <div className='text-center py-12'>
+                        <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
+                          <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
+                            <path d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' />
+                          </svg>
                         </div>
+                        <p className='text-[#a1a1aa] mb-2'>No users with 100+ points yet</p>
+                        <p className='text-sm text-[#71717a]'>Start referring to see rankings</p>
                       </div>
-                    ))
-                  ) : (
-                    <div className='text-center py-12'>
-                      <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
-                        <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
-                          <path d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' />
-                        </svg>
-                      </div>
-                      <p className='text-[#a1a1aa] mb-2'>No users with 100+ points yet</p>
-                      <p className='text-sm text-[#71717a]'>Start referring to see rankings</p>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
 
