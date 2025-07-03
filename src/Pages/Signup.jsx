@@ -62,8 +62,14 @@ export default function SignupPage() {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
         userType: formData.userType,
-        enteredReferralCode: formData.referralCode || null,
       };
+
+      // Only add enteredReferralCode if it's not empty
+      if (formData.referralCode && formData.referralCode.trim()) {
+        userData.enteredReferralCode = formData.referralCode;
+      }
+
+      console.log('User Data:', userData);
 
       const response = await apiService.register(userData);
 
