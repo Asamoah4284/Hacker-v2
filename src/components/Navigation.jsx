@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import kolaLogo from '../assets/images/logo/kola-logo.png';
+import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
 
 function useCartCount() {
   const [cartCount, setCartCount] = useState(() => {
@@ -110,21 +110,11 @@ export default function Navigation() {
           )}
         </button>
         <NavLink to='/' className='flex items-center group'>
-          <div className='relative h-12 w-auto overflow-hidden'>
-            {/* Base logo with terracotta filter */}
-            <img
-              src={kolaLogo}
-              alt='Kola Logo'
-              className='h-12 w-auto object-contain group-hover:scale-105 transition-transform relative z-10'
-              style={{
-                filter: 'sepia(1) saturate(2) hue-rotate(-10deg) brightness(1.2) contrast(1.1)',
-              }}
-            />
-            {/* Gradient overlay for left-to-right transition */}
-            <div 
-              className='absolute inset-0 w-full h-full bg-gradient-to-r from-[#d7906e] to-[#e9b19b] opacity-80 mix-blend-multiply group-hover:scale-105 transition-transform pointer-events-none'
-            ></div>
-          </div>
+          <img
+            src={kolaLogo}
+            alt='Kola Logo'
+            className='h-7 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform'
+          />
         </NavLink>
       </div>
       <div className='hidden md:flex gap-8'>
@@ -208,7 +198,7 @@ export default function Navigation() {
             <div className='relative' ref={menuRef}>
               <button
                 onClick={() => setShowMenu((v) => !v)}
-                className={`w-11 h-11 flex items-center justify-center rounded-full border-2 ${
+                className={`w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-full border-2 ${
                   showMenu ? 'border-[#d4845b]' : 'border-[#232326]'
                 } bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:scale-105 active:scale-95 cursor-pointer`}
                 aria-label='User menu'
@@ -221,7 +211,7 @@ export default function Navigation() {
                     className='w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-900'
                   />
                 ) : (
-                  <span className='text-lg font-bold text-[#7a3419] drop-shadow-sm select-none'>
+                  <span className='text-base md:text-lg font-bold text-[#7a3419] drop-shadow-sm select-none'>
                     {userData?.name
                       ? userData.name
                           .split(' ')

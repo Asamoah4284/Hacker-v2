@@ -29,9 +29,11 @@ export default function OrdersPage() {
       setLoading(true);
       setError(null);
       try {
-        const data = await apiService.getOrders();
+        // Get userData from localStorage
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const userId = userData?.id || userData?._id || userData?.userId;
+        const data = await apiService.getOrders(userId);
         setOrders(Array.isArray(data) ? data : data.orders || []);
-        
       } catch {
         setError('Failed to load orders.');
       } finally {
@@ -60,6 +62,7 @@ export default function OrdersPage() {
                   <thead>
                     <tr className='text-left border-b border-gray-200 dark:border-gray-700'>
                       <th className='py-3 pr-6 font-semibold'>Order #</th>
+                      <th className='py-3 pr-6 font-semibold'>Order Name</th>
                       <th className='py-3 pr-6 font-semibold'>Date</th>
                       <th className='py-3 pr-6 font-semibold'>Status</th>
                       <th className='py-3 pr-6 font-semibold'>Items</th>
@@ -70,33 +73,35 @@ export default function OrdersPage() {
                   <tbody>
                     {orders.map((order) => (
                       <tr
-                        key={order.id || order._id}
+                        key={order._id || order.id}
                         className='border-b border-gray-100 dark:border-gray-800 hover:bg-[#f8e1da]/20 dark:hover:bg-[#232326]/40 transition'
                       >
                         <td className='py-4 pr-6 font-mono font-semibold'>
-                          {order.id || order._id}
+                          {order._id || order.id}
                         </td>
                         <td className='py-4 pr-6'>
-                          {order.date || order.createdAt?.slice(0, 10)}
+                          {order.items && order.items.length > 0
+                            ? order.items[0].name
+                            : '-'}
+                        </td>
+                        <td className='py-4 pr-6'>
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString()
+                            : ''}
                         </td>
                         <td className='py-4 pr-6'>
                           <StatusBadge
                             status={
-                              order.status || order.orderStatus || 'Unknown'
+                              order.status || order.orderStatus || 'Pending'
                             }
                           />
                         </td>
                         <td className='py-4 pr-6'>
-                          {order.items?.length || order.items || 0}
+                          {order.items?.length || 0}
                         </td>
                         <td className='py-4 pr-6 font-semibold'>
                           GH₵
                           {(order.total || order.totalAmount || 0).toFixed(2)}
-                        </td>
-                        <td className='py-4'>
-                          <button className='px-4 py-2 rounded-lg bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold hover:from-[#f1c3b5] hover:to-[#d4845b] transition-all duration-200 shadow'>
-                            View Details
-                          </button>
                         </td>
                       </tr>
                     ))}

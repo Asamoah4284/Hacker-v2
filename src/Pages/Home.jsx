@@ -20,11 +20,11 @@ import Footer from '../components/Footer';
 import '../index.css'; // Ensure custom CSS is loaded
 
 // Import local hero images
-import hero1 from '../assets/images/hero/hero-1.webp';
-import hero2 from '../assets/images/hero/hero-2.webp';
-import hero3 from '../assets/images/hero/hero-3.webp';
-import hero4 from '../assets/images/hero/hero-4.webp';
-import hero5 from '../assets/images/hero/hero-5.webp';
+import hero1 from '../assets/images/hero/hero-1.png';
+import hero2 from '../assets/images/hero/hero-2.png';
+import hero3 from '../assets/images/hero/hero-3.png';
+import hero4 from '../assets/images/hero/hero-4.jpg';
+import hero5 from '../assets/images/hero/hero-5.png';
 
 // Local UI components
 function Button({ children, className = '', variant, size, ...props }) {
