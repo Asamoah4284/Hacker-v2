@@ -4,9 +4,12 @@ import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
+import { useDeviceFingerprint } from '../hooks/useDeviceFingerprint';
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { visitorId, fingerprintData, loading: fingerprintLoading, error: fingerprintError, isReady } = useDeviceFingerprint();
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -70,6 +73,37 @@ export default function SignupPage() {
       }
 
       console.log('User Data:', userData);
+      console.log('Device ID:', visitorId);
+      console.log('Fingerprint Loading:', fingerprintLoading);
+      console.log('Fingerprint Error:', fingerprintError);
+      console.log('Fingerprint Ready:', isReady);
+      
+      // Add comprehensive fingerprint data to user data if available
+      if (fingerprintData && visitorId) {
+        userData.fingerprint = {
+          visitorId: visitorId,
+          confidence: fingerprintData.confidence?.score || 0,
+          components: Object.keys(fingerprintData.components || {}),
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+          screenResolution: `${screen.width}x${screen.height}`,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          // Include additional browser/environment data
+          cookieEnabled: navigator.cookieEnabled,
+          doNotTrack: navigator.doNotTrack,
+          hardwareConcurrency: navigator.hardwareConcurrency,
+          maxTouchPoints: navigator.maxTouchPoints,
+          vendor: navigator.vendor
+        };
+        console.log('Comprehensive fingerprint data added to user data:', userData.fingerprint);
+      } else {
+        console.log('Fingerprint not available yet');
+      }
+
+      // Log the final payload being sent to backend
+      console.log('Final payload being sent to backend:', JSON.stringify(userData, null, 2));
 
       const response = await apiService.register(userData);
 
@@ -194,6 +228,8 @@ export default function SignupPage() {
                 {error}
               </div>
             )}
+
+
 
             {/* Form */}
             <div className='bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/10 p-8'>

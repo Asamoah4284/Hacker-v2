@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://citsa-hackathon-2.onrender.com';
+const API_BASE_URL = 'https://backend-v2-ajyu.onrender.com';
 
 // API Endpoints
 export const API_ENDPOINTS = {
