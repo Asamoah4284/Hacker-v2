@@ -8,19 +8,50 @@ export default function CartsPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [checkoutMessage, setCheckoutMessage] = useState('');
   const [showReferralModal, setShowReferralModal] = useState(false);
-  const [referralLink, setReferralLink] = useState('');
+  const [referralCode, setReferralCode] = useState('');
   const [copied, setCopied] = useState(false);
+  const [referralError, setReferralError] = useState('');
 
   const didLoad = useRef(false);
   const navigate = useNavigate();
 
-  const copyReferralLink = () => {
-    console.log('Copying referral link:', referralLink);
-    navigator.clipboard.writeText(referralLink).then(() => {
+  // Function to generate referral code on frontend
+  const generateReferralCode = () => {
+    console.log('Generating referral code on frontend...');
+    
+    try {
+      // Get user data for personalization
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const userEmail = userData?.email || 'user';
+      
+      console.log('User email for referral code:', userEmail);
+      
+      // Generate a unique referral code
+      const timestamp = Date.now().toString(36); // Base36 timestamp
+      const randomPart = Math.random().toString(36).substring(2, 8); // Random 6 chars
+      const emailPart = userEmail.split('@')[0].substring(0, 3).toUpperCase(); // First 3 chars of email
+      
+      // Combine parts to create referral code
+      const referralCode = `${emailPart}${timestamp}${randomPart}`.toUpperCase();
+      
+      console.log('Generated referral code:', referralCode);
+      setReferralError(''); // Clear any previous errors
+      return referralCode;
+      
+    } catch (error) {
+      console.error('Error generating referral code:', error);
+      setReferralError('Failed to generate referral code. Please try again.');
+      return null;
+    }
+  };
+
+  const copyReferralCode = () => {
+    console.log('Copying referral code:', referralCode);
+    navigator.clipboard.writeText(referralCode).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }).catch(err => {
-      console.error('Failed to copy referral link:', err);
+      console.error('Failed to copy referral code:', err);
     });
   };
 
@@ -30,6 +61,16 @@ export default function CartsPage() {
       const stored = JSON.parse(localStorage.getItem('cart')) || [];
       setCart(stored);
       console.log('Loaded cart from localStorage:', stored);
+      
+      // Debug: Check cart structure for artisanId
+      if (stored.length > 0) {
+        console.log('Cart item structure:', {
+          firstItem: stored[0],
+          hasArtisanId: !!stored[0].artisanId,
+          artisanId: stored[0].artisanId,
+          seller: stored[0].seller
+        });
+      }
     } catch {
       setCart([]);
       console.log('Failed to load cart from localStorage');
@@ -84,20 +125,21 @@ export default function CartsPage() {
   const userData = JSON.parse(localStorage.getItem('userData'));
   
   // Placeholder payment success handler
-  const onPaymentSuccess = () => {
-    console.log('Payment successful, showing referral modal');
+  const onPaymentSuccess = async () => {
+    console.log('Payment successful, generating referral code on frontend');
     setCheckoutMessage('Payment successful! Your order has been placed.');
     
-    // Generate referral link
-    const userData = JSON.parse(localStorage.getItem('userData'));
-    const userId = userData?.id || 'user';
-    const baseUrl = window.location.origin;
-    const referralUrl = `${baseUrl}/marketplace?ref=${userId}`;
-    setReferralLink(referralUrl);
+    // Generate referral code on frontend
+    const generatedCode = generateReferralCode();
     
-    // Show referral modal
-    setShowReferralModal(true);
-    console.log('Referral modal should now be visible');
+    if (generatedCode) {
+      setReferralCode(generatedCode);
+      setShowReferralModal(true);
+      console.log('Referral modal should now be visible with frontend-generated code');
+    } else {
+      console.log('Failed to generate referral code, showing modal with error');
+      setShowReferralModal(true);
+    }
   };
 
   // Placeholder payment close handler
@@ -117,6 +159,14 @@ export default function CartsPage() {
     if (cart.length === 0) return;
     setCheckoutMessage('');
     setIsProcessing(true);
+    
+    console.log('Starting checkout process with cart:', cart);
+    console.log('Cart items structure:', cart.map(item => ({
+      id: item.id,
+      name: item.name,
+      seller: item.seller,
+      artisanId: item.artisanId
+    })));
 
     const userData = JSON.parse(localStorage.getItem('userData'));
     let userId = userData?.id;
@@ -311,7 +361,7 @@ export default function CartsPage() {
       </section>
       
       {/* Referral Modal */}
-      {console.log('Modal visibility state:', showReferralModal, 'Referral link:', referralLink)}
+      {console.log('Modal visibility state:', showReferralModal, 'Referral code:', referralCode)}
       {showReferralModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8">
@@ -327,25 +377,48 @@ export default function CartsPage() {
               </h2>
               
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Thank you for your purchase! 🎉 You're now part of our artisan community. Share this referral link with friends and family to help grow our circle of creators and customers.
+                Thank you for your purchase! 🎉 You're now part of our artisan community. Share this referral code with friends and family to help grow our circle of creators and customers.
               </p>
               
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={referralLink}
-                    readOnly
-                    className="flex-1 bg-transparent text-sm text-gray-700 dark:text-gray-300 outline-none"
-                  />
+              {referralError ? (
+                <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-semibold">Referral Code Error</span>
+                  </div>
+                  <p className="text-red-700 dark:text-red-300 text-sm mt-2">{referralError}</p>
                   <button
-                    onClick={copyReferralLink}
-                    className="px-3 py-1 rounded-lg bg-[#d4845b] text-white text-sm font-semibold hover:bg-[#f1c3b5] transition-colors"
+                    onClick={async () => {
+                      console.log('Retrying referral code generation...');
+                      const retryCode = generateReferralCode();
+                      if (retryCode) {
+                        setReferralCode(retryCode);
+                        setReferralError('');
+                      }
+                    }}
+                    className="mt-3 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors"
                   >
-                    {copied ? 'Copied!' : 'Copy'}
+                    Retry
                   </button>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Your Referral Code</p>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border-2 border-dashed border-[#d4845b]">
+                      <span className="text-2xl font-bold text-[#d4845b] tracking-wider">{referralCode}</span>
+                    </div>
+                    <button
+                      onClick={copyReferralCode}
+                      className="mt-3 px-4 py-2 rounded-lg bg-[#d4845b] text-white text-sm font-semibold hover:bg-[#f1c3b5] transition-colors"
+                    >
+                      {copied ? 'Copied!' : 'Copy Code'}
+                    </button>
+                  </div>
+                </div>
+              )}
               
               <div className="flex flex-col gap-3">
                 <button

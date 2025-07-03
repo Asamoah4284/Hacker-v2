@@ -84,6 +84,10 @@ export default function Dashboard() {
   // Get user data from localStorage
   const userEmail = localStorage.getItem('userEmail');
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  
+  // Log user data for debugging
+  console.log('User Data from localStorage:', userData);
+  console.log('User Referral Code:', userData.myReferralCode);
 
   // Show loading state
   if (loading) {
@@ -135,22 +139,47 @@ export default function Dashboard() {
                 Track your referrals, earnings, and impact
               </p>
             </div>
-            <div className='flex gap-4'>
-              <button className='px-6 py-3 bg-[#d4845b] text-white font-semibold rounded-xl hover:bg-[#b8734a] transition-colors'>
-                Create New Link
-              </button>
-              <button className='px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors'>
-                Export Data
-              </button>
-            </div>
+
           </div>
+          
+          {/* Referral Code Section */}
+          {userData.myReferralCode && (
+            <div className='mt-6 bg-gradient-to-r from-[#d4845b]/10 to-[#f8e1da]/5 rounded-xl p-6 border border-[#d4845b]/20'>
+              <div>
+                <h3 className='text-lg font-semibold text-white mb-2'>Your Referral Code</h3>
+                <p className='text-[#a1a1aa] text-sm mb-3'>
+                  Share this code with friends to earn points when they sign up
+                </p>
+                <div className='flex items-center gap-3'>
+                  <div className='bg-white/10 rounded-lg px-4 py-3 border border-white/20'>
+                    <code className='text-[#d4845b] font-mono font-bold text-lg tracking-wider'>
+                      {userData.myReferralCode}
+                    </code>
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(userData.myReferralCode);
+                      // You could add a toast notification here
+                      alert('Referral code copied to clipboard!');
+                    }}
+                    className='px-4 py-3 bg-[#d4845b] text-white font-semibold rounded-lg hover:bg-[#b8734a] transition-colors flex items-center gap-2'
+                  >
+                    <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z' />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Stats Cards */}
       <section className='py-8'>
         <div className='container mx-auto px-4 sm:px-6 md:px-8 xl:px-32'>
-          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
             {/* Total Points */}
             <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'>
               <div className='flex items-center justify-between mb-4'>
@@ -168,7 +197,7 @@ export default function Dashboard() {
                 <span className='text-sm text-[#a1a1aa]'>+12%</span>
               </div>
               <h3 className='text-2xl font-bold text-white mb-1'>
-                {(dashboardData?.totalPoints || 0).toLocaleString()}
+                {(userData.points || 0).toLocaleString()}
               </h3>
               <p className='text-[#a1a1aa]'>Total Points</p>
             </div>
@@ -190,54 +219,14 @@ export default function Dashboard() {
                 <span className='text-sm text-[#10b981]'>+8%</span>
               </div>
               <h3 className='text-2xl font-bold text-white mb-1'>
-                {dashboardData?.peopleReferred || 0}
+                {Math.floor((userData.points || 0) / 100)}
               </h3>
               <p className='text-[#a1a1aa]'>People Referred</p>
             </div>
 
-            {/* Active Links */}
-            <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'>
-              <div className='flex items-center justify-between mb-4'>
-                <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#2563eb] flex items-center justify-center'>
-                  <svg
-                    className='w-6 h-6 text-white'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    viewBox='0 0 24 24'
-                  >
-                    <path d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' />
-                  </svg>
-                </div>
-                <span className='text-sm text-[#3b82f6]'>+3</span>
-              </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>
-                {dashboardData?.activeLinks || 0}
-              </h3>
-              <p className='text-[#a1a1aa]'>Active Links</p>
-            </div>
 
-            {/* Quality Score */}
-            <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10 hover:border-[#d4845b]/30 transition-all'>
-              <div className='flex items-center justify-between mb-4'>
-                <div className='w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#d97706] flex items-center justify-center'>
-                  <svg
-                    className='w-6 h-6 text-white'
-                    fill='none'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    viewBox='0 0 24 24'
-                  >
-                    <path d='M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' />
-                  </svg>
-                </div>
-                <span className='text-sm text-[#f59e0b]'>+0.2</span>
-              </div>
-              <h3 className='text-2xl font-bold text-white mb-1'>
-                {dashboardData?.averageQualityScore || 0}
-              </h3>
-              <p className='text-[#a1a1aa]'>Quality Score</p>
-            </div>
+
+
           </div>
         </div>
       </section>
@@ -246,7 +235,7 @@ export default function Dashboard() {
       <section className='py-4 border-b border-white/10'>
         <div className='container mx-auto px-4 sm:px-6 md:px-8 xl:px-32'>
           <div className='flex gap-1 bg-white/5 rounded-xl p-1 overflow-x-auto whitespace-nowrap min-w-0'>
-            {['overview', 'referrals', 'leaderboard'].map((tab) => (
+            {['overview', 'leaderboard'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -408,107 +397,7 @@ export default function Dashboard() {
             </div>
           )}
 
-          {activeTab === 'referrals' && (
-            <div className='space-y-8'>
-              {/* Referral Analytics */}
-              <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10'>
-                <h2 className='text-2xl font-bold text-white mb-6'>
-                  Referral Analytics
-                </h2>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                  <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#d4845b] mb-2'>
-                      {dashboardData?.analytics?.totalClicks || 0}
-                    </div>
-                    <div className='text-[#a1a1aa]'>Total Clicks</div>
-                  </div>
-                  <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#10b981] mb-2'>
-                      {dashboardData?.analytics?.successfulReferrals || 0}
-                    </div>
-                    <div className='text-[#a1a1aa]'>Successful Referrals</div>
-                  </div>
-                  <div className='text-center p-6 bg-white/5 rounded-xl'>
-                    <div className='text-3xl font-bold text-[#3b82f6] mb-2'>
-                      {dashboardData?.analytics?.conversionRate || '0%'}
-                    </div>
-                    <div className='text-[#a1a1aa]'>Conversion Rate</div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Referral History */}
-              <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10'>
-                <h3 className='text-xl font-bold text-white mb-6'>
-                  Referral History
-                </h3>
-                <div className='overflow-x-auto'>
-                  <table className='w-full'>
-                    <thead>
-                      <tr className='border-b border-white/10'>
-                        <th className='text-left py-3 text-[#a1a1aa] font-medium'>
-                          Name
-                        </th>
-                        <th className='text-left py-3 text-[#a1a1aa] font-medium'>
-                          Date
-                        </th>
-                        <th className='text-left py-3 text-[#a1a1aa] font-medium'>
-                          Points Earned
-                        </th>
-                        <th className='text-left py-3 text-[#a1a1aa] font-medium'>
-                          Status
-                        </th>
-                        <th className='text-left py-3 text-[#a1a1aa] font-medium'>
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(dashboardData?.recentReferrals || []).map((referral, index) => (
-                        <tr key={index} className='border-b border-white/5'>
-                          <td className='py-4'>
-                            <div className='flex items-center gap-3'>
-                              <div className='w-8 h-8 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-xs font-bold text-[#7a3419]'>
-                                {referral.name
-                                  .split(' ')
-                                  .map((n) => n[0])
-                                  .join('')}
-                              </div>
-                              <span className='font-medium text-white'>
-                                {referral.name}
-                              </span>
-                            </div>
-                          </td>
-                          <td className='py-4 text-[#a1a1aa]'>
-                            {referral.date}
-                          </td>
-                          <td className='py-4 font-bold text-[#d4845b]'>
-                            +{referral.points}
-                          </td>
-                          <td className='py-4'>
-                            <span
-                              className={`text-xs px-3 py-1 rounded-full ${
-                                referral.status === 'active'
-                                  ? 'bg-green-500/20 text-green-400'
-                                  : 'bg-yellow-500/20 text-yellow-400'
-                              }`}
-                            >
-                              {referral.status}
-                            </span>
-                          </td>
-                          <td className='py-4'>
-                            <button className='text-[#d4845b] hover:text-white transition-colors'>
-                              View Details
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
 
           {activeTab === 'leaderboard' && (
             <div className='space-y-8'>

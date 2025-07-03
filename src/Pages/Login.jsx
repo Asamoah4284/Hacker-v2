@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
@@ -35,6 +35,13 @@ export default function LoginPage() {
         formData.email,
         formData.password
       );
+
+      // Log the complete response
+      console.log('Login Response:', response);
+      console.log('Response Type:', typeof response);
+      console.log('Response Keys:', Object.keys(response));
+      console.log('Token:', response.token);
+      console.log('User Data:', response.user);
 
       // Store authentication data
       if (response.token) {

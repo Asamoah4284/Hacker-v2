@@ -11,6 +11,7 @@ export default function SignupPage() {
     name: '',
     email: '',
     userType: 'customer',
+    referralCode: '',
     password: '',
     confirmPassword: '',
     agreeToTerms: false,
@@ -62,6 +63,13 @@ export default function SignupPage() {
         confirmPassword: formData.confirmPassword,
         userType: formData.userType,
       };
+
+      // Only add enteredReferralCode if it's not empty
+      if (formData.referralCode && formData.referralCode.trim()) {
+        userData.enteredReferralCode = formData.referralCode;
+      }
+
+      console.log('User Data:', userData);
 
       const response = await apiService.register(userData);
 
@@ -236,6 +244,20 @@ export default function SignupPage() {
                           Artisan/Seller
                         </option>
                       </select>
+                    </div>
+                    <div>
+                      <label className='block text-sm font-medium text-[#a1a1aa] mb-2'>
+                        Referral Code
+                      </label>
+                      <input
+                        type='text'
+                        name='referralCode'
+                        value={formData.referralCode}
+                        onChange={handleInputChange}
+                        className='w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#d4845b] focus:ring-1 focus:ring-[#d4845b] transition-colors'
+                        placeholder='Enter referral code'
+                        disabled={loading}
+                      />
                     </div>
                   </div>
                 )}
