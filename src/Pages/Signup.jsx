@@ -62,7 +62,7 @@ export default function SignupPage() {
         password: formData.password,
         confirmPassword: formData.confirmPassword,
         userType: formData.userType,
-        enteredReferralCode: formData.referralCode,
+        enteredReferralCode: formData.referralCode || null,
       };
 
       const response = await apiService.register(userData);
