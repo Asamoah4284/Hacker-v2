@@ -291,9 +291,9 @@ export default function Navigation() {
             </Link>
             <Link
               to='/signup'
-              className='bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold px-6 py-2 rounded-lg hover:from-[#f1c3b5] hover:to-[#d4845b] transform hover:scale-[1.02] transition-all duration-200 shadow-lg'
+              className='bg-gradient-to-r from-[#d4845b] to-[#f1c3b5] text-white font-semibold px-3 py-1 text-sm md:px-5 md:py-1 md:text-base rounded-lg hover:from-[#f1c3b5] hover:to-[#d4845b] transform hover:scale-[1.02] transition-all duration-200 shadow-lg'
             >
-              Sign Up
+              SignUp
             </Link>
           </div>
         )}
