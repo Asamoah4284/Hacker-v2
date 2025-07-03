@@ -113,7 +113,7 @@ export default function Navigation() {
           <img
             src={kolaLogo}
             alt='Kola Logo'
-            className='h-12 w-auto object-contain group-hover:scale-105 transition-transform'
+            className='h-7 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform'
           />
         </NavLink>
       </div>
@@ -198,7 +198,7 @@ export default function Navigation() {
             <div className='relative' ref={menuRef}>
               <button
                 onClick={() => setShowMenu((v) => !v)}
-                className={`w-11 h-11 flex items-center justify-center rounded-full border-2 ${
+                className={`w-9 h-9 md:w-11 md:h-11 flex items-center justify-center rounded-full border-2 ${
                   showMenu ? 'border-[#d4845b]' : 'border-[#232326]'
                 } bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#d4845b] hover:scale-105 active:scale-95 cursor-pointer`}
                 aria-label='User menu'
@@ -211,7 +211,7 @@ export default function Navigation() {
                     className='w-full h-full object-cover rounded-full border-2 border-white dark:border-gray-900'
                   />
                 ) : (
-                  <span className='text-lg font-bold text-[#7a3419] drop-shadow-sm select-none'>
+                  <span className='text-base md:text-lg font-bold text-[#7a3419] drop-shadow-sm select-none'>
                     {userData?.name
                       ? userData.name
                           .split(' ')
