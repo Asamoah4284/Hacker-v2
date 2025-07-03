@@ -369,12 +369,12 @@ export default function Marketplace() {
                           </div>
                           <span className='text-sm text-[#d4845b] font-medium'>
                             {transformedProduct.originalPrice > product.price
-                              ? `${Math.round(
+                              ? `${(
                                   ((transformedProduct.originalPrice -
                                     product.price) /
                                     transformedProduct.originalPrice) *
                                     100
-                                )}% OFF`
+                                ).toFixed(2)}% OFF`
                               : ''}
                           </span>
                         </div>

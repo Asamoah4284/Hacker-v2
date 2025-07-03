@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiService } from '../config/api';
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 import kolaLogo from '../assets/images/logo/kola-logo-gradient.png';
 
 // Default empty data structure for dashboard
@@ -22,7 +23,7 @@ const defaultData = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('leaderboard');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [dashboardData, setDashboardData] = useState(null);
   const [leaderboardUsers, setLeaderboardUsers] = useState([]);
@@ -144,8 +145,8 @@ export default function Dashboard() {
     <div className='min-h-screen bg-gradient-to-br from-[#18181b] via-[#232326] to-[#18181b] text-white'>
       {/* Toast Notification */}
       {showToast && (
-        <div className='fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300'>
-          <div className='bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2'>
+        <div className='fixed top-4 right-4 z-50 transform transition-all duration-300 ease-in-out'>
+          <div className='bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 animate-pulse'>
             <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 13l4 4L19 7' />
             </svg>
@@ -186,6 +187,7 @@ export default function Dashboard() {
                   </div>
                                       <button
                       onClick={() => {
+                        console.log('Copy button clicked');
                         navigator.clipboard.writeText(userData.myReferralCode);
                         showToastMessage('Referral code copied to clipboard!');
                       }}
@@ -262,7 +264,7 @@ export default function Dashboard() {
       <section className='py-4 border-b border-white/10'>
         <div className='container mx-auto px-4 sm:px-6 md:px-8 xl:px-32'>
           <div className='flex gap-1 bg-white/5 rounded-xl p-1 overflow-x-auto whitespace-nowrap min-w-0'>
-            {['overview', 'leaderboard'].map((tab) => (
+            {['leaderboard', 'overview'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -333,94 +335,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Recent Activity & Active Links */}
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-                {/* Recent Referrals */}
-                <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10'>
-                  <h3 className='text-xl font-bold text-white mb-6'>
-                    Recent Referrals
-                  </h3>
-                  <div className='space-y-4'>
-                    {(dashboardData?.recentReferrals || []).length > 0 ? (
-                      (dashboardData?.recentReferrals || []).map((referral, index) => (
-                        <div key={index} className='flex items-center justify-between p-4 bg-white/5 rounded-xl'>
-                          <div className='flex items-center gap-3'>
-                            <div className='w-10 h-10 rounded-full bg-gradient-to-br from-[#f8e1da] via-[#f1c3b5] to-[#d4845b] flex items-center justify-center text-sm font-bold text-[#7a3419]'>
-                              {referral.name.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div>
-                              <p className='font-medium text-white'>{referral.name}</p>
-                              <p className='text-sm text-[#a1a1aa]'>{referral.date}</p>
-                            </div>
-                          </div>
-                          <div className='text-right'>
-                            <p className='font-bold text-[#d4845b]'>+{referral.points} pts</p>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              referral.status === 'active' 
-                                ? 'bg-green-500/20 text-green-400' 
-                                : 'bg-yellow-500/20 text-yellow-400'
-                            }`}>
-                              {referral.status}
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className='text-center py-8'>
-                        <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
-                          <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
-                            <path d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' />
-                          </svg>
-                        </div>
-                        <p className='text-[#a1a1aa] mb-2'>No recent referrals</p>
-                        <p className='text-sm text-[#71717a]'>Share your links to start earning</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Active Links */}
-                <div className='bg-white/10 backdrop-blur-lg rounded-2xl p-4 sm:p-6 md:p-8 border border-white/10'>
-                  <h3 className='text-xl font-bold text-white mb-6'>
-                    Active Links
-                  </h3>
-                  <div className='space-y-4'>
-                    {(dashboardData?.activeLinks || []).length > 0 ? (
-                      (dashboardData?.activeLinks || []).map((link) => (
-                        <div key={link.id} className='p-4 bg-white/5 rounded-xl'>
-                          <div className='flex items-center justify-between mb-2'>
-                            <h4 className='font-medium text-white'>{link.name}</h4>
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              link.status === 'active' 
-                                ? 'bg-green-500/20 text-green-400' 
-                                : 'bg-yellow-500/20 text-yellow-400'
-                            }`}>
-                              {link.status}
-                            </span>
-                          </div>
-                          <div className='flex items-center justify-between text-sm text-[#a1a1aa]'>
-                            <span>{link.clicks} clicks</span>
-                            <span>{link.conversions} conversions</span>
-                            <span className='text-[#d4845b] font-medium'>
-                              {((link.conversions / link.clicks) * 100).toFixed(1)}%
-                            </span>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className='text-center py-8'>
-                        <div className='w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4'>
-                          <svg className='w-8 h-8 text-[#a1a1aa]' fill='none' stroke='currentColor' strokeWidth='2' viewBox='0 0 24 24'>
-                            <path d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1' />
-                          </svg>
-                        </div>
-                        <p className='text-[#a1a1aa] mb-2'>No active links</p>
-                        <p className='text-sm text-[#71717a]'>Create your first referral link</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+            
             </div>
           )}
 
@@ -518,9 +433,10 @@ export default function Dashboard() {
           )}
         </div>
       </section>
+      <Footer />
 
       {/* Footer */}
-      <footer className='relative bg-[#18181b] border-t border-white/10 pt-16 pb-8 text-base backdrop-blur-lg shadow-2xl rounded-t-2xl mt-16'>
+      {/* <footer className='relative bg-[#18181b] border-t border-white/10 pt-16 pb-8 text-base backdrop-blur-lg shadow-2xl rounded-t-2xl mt-16'>
         <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#d4845b] via-[#f8e1da] to-[#d4845b] opacity-40 rounded-t-2xl'></div>
         <div className='container mx-auto px-4 sm:px-6 md:px-8 xl:px-32 grid grid-cols-1 md:grid-cols-5 gap-14 mb-10'>
           <div>
@@ -644,7 +560,7 @@ export default function Dashboard() {
             </a>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
